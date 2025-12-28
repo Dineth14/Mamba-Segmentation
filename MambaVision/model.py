@@ -15,7 +15,7 @@ from encoders import RGBEncoder
 from light_decoder import LightUNetDecoder
 
 
-class NSSTMamba(nn.Module):
+class Mambavision(nn.Module):
     """
     UrbanMamba Semantic Segmentation Model.
     
@@ -196,9 +196,9 @@ class NSSTMamba(nn.Module):
         return main_out
 
 
-def build_model(cfg: Config) -> NSSTMamba:
+def build_model(cfg: Config) -> Mambavision:
     """Build UrbanMamba model from config."""
-    model = NSSTMamba(
+    model = Mambavision(
         num_classes=cfg.NUM_CLASSES,
         encoder_dims=cfg.MAMBAVISION_DIMS,
         decoder_channels=cfg.DECODER_CHANNELS,
@@ -217,8 +217,8 @@ if __name__ == "__main__":
     print(f"Testing on device: {device}")
     
     # Create model
-    print("\nBuilding NSSTMamba model...")
-    model = NSSTMamba(
+    print("\nBuilding Mambavision model...")
+    model = Mambavision(
         num_classes=7,
         encoder_dims=(96, 192, 384, 768),
         decoder_channels=256,

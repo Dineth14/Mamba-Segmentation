@@ -24,7 +24,7 @@ from tqdm import tqdm
 
 # Local imports
 from config import Config
-from model import NSSTMamba
+from model import build_model
 from dataset import build_dataloaders
 from losses import TriBraidLoss
 from utils import (
@@ -237,13 +237,7 @@ def train(config: Config, resume_path: str = None):
     logger.info(f"MambaVision depths: {config.MAMBAVISION_DEPTHS}")
     logger.info(f"MambaVision dims: {config.MAMBAVISION_DIMS}")
     logger.info(f"MambaVision drop path: {config.MAMBAVISION_DROP_PATH}")
-    model = NSSTMamba(
-        num_classes=config.NUM_CLASSES,
-        encoder_dims=config.MAMBAVISION_DIMS,
-        encoder_depths=config.MAMBAVISION_DEPTHS,
-        drop_path_rate=config.MAMBAVISION_DROP_PATH,
-        weights_path=config.WEIGHTS_PATH,
-    )
+    model = build_model(config)
     model = model.to(device)
     
     # Log model parameters

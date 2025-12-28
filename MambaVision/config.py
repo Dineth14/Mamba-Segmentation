@@ -16,10 +16,10 @@ class Config:
     
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
-    WEIGHTS_PATH: str = "/storage2/ChangeDetection/NSST-mamba/mamba_vision/UrbanMamba/weights/1k"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/mamba_vision/UrbanMamba/outputs/mambavision_base_256"
+    WEIGHTS_PATH: str = "/storage2/ChangeDetection/NSST-mamba/mamba-segmentations/mamba_vision/UrbanMamba/weights/1k"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/mambavision_tiny2_256"
     RESUME_PATH: str = ""
-    MAMBAVISION_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/mamba_vision/UrbanMamba/weights/1k"
+    MAMBAVISION_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/mamba-segmentations/mamba_vision/UrbanMamba/weights/1k"
     MAMBAVISION_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
         "tiny": "mambavision_tiny_1k.pth.tar",
         "tiny2": "mambavision_tiny2_1k.pth.tar",
@@ -89,11 +89,11 @@ class Config:
     
     # MambaVision variant selection: "tiny" | "tiny2" | "small" | "base" |
     # "large" | "large2" 
-    MAMBAVISION_VARIANT: str = "base"
+    MAMBAVISION_VARIANT: str = "tiny2"
     # Auto-populated from maps based on MAMBAVISION_VARIANT
-    MAMBAVISION_DEPTHS: Tuple[int, ...] = (3, 3, 10, 5)
-    MAMBAVISION_DIMS: Tuple[int, ...] = (128, 256, 512, 1024)
-    MAMBAVISION_DROP_PATH: float = 0.3
+    MAMBAVISION_DEPTHS: Tuple[int, ...] = (1, 3, 11, 4)
+    MAMBAVISION_DIMS: Tuple[int, ...] = (80, 160, 320, 640)
+    MAMBAVISION_DROP_PATH: float = 0.2
     
     # Decoder
     DECODER_CHANNELS: int = 256

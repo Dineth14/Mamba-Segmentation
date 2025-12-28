@@ -1,11 +1,11 @@
-# UrbanMamba (MambaVision)
+# UrbanMamba
 
-Production-grade RGB-only semantic segmentation system for the LOVEDA dataset using a MambaVision encoder.
+Production-grade RGB-only semantic segmentation system for the LOVEDA dataset.
 
 ## Architecture Overview
 
 ```
-RGB Image (3ch) ──► RGBEncoder (MambaVision: tiny/small/base) ──► LightUNetDecoder ──► Predictions
+RGB Image (3ch) ──► RGBEncoder (Spatial-Mamba: tiny/small/base) ──► LightUNetDecoder ──► Predictions
 ```
 
 ## Files
@@ -14,8 +14,8 @@ RGB Image (3ch) ──► RGBEncoder (MambaVision: tiny/small/base) ──► Li
 |------|---------|
 | `config.py` | Central configuration with all hyperparameters |
 | `parts.py` | Building blocks: Conv/attention utilities |
-| `encoders.py` | RGBEncoder (MambaVision) |
-| `light_decoder.py` | Lightweight U-Net decoder (single main head) |
+| `encoders.py` | RGBEncoder (Spatial-Mamba) |
+| `light_decoder.py` | Lightweight U-Net decoder with deep supervision outputs |
 | `model.py` | NSSTMamba RGB-only assembly |
 | `dataset.py` | LovedaDataset with albumentations for RGB + masks |
 | `utils.py` | SegmentationEvaluator, PolynomialDecay, checkpoint utilities |
@@ -24,8 +24,9 @@ RGB Image (3ch) ──► RGBEncoder (MambaVision: tiny/small/base) ──► Li
 
 ## Key Features
 
-- **RGB-only Architecture**: MambaVision for RGB features + lightweight U-Net decoder
-- **MambaVision Variants**: tiny, tiny2, small, base, base_21k, large, large_21k, large2, large2_512_21k, large3_256_21k, large3_512_21k
+- **RGB-only Architecture**: Spatial-Mamba for RGB features + lightweight U-Net decoder
+- **Spatial-Mamba Variants**: Select between tiny, small, and base via config
+- **TriBraidLoss**: Lovász-Softmax + Focal Loss + Boundary Loss
 - **Loss**: Lovasz + Focal + Boundary (single main output)
 - **Differential Learning Rates**: backbone=6e-5, head=3e-4
 - **Mixed Precision Training**: AMP for Tensor Core utilization
@@ -83,9 +84,9 @@ DATA_ROOT/
 
 ## Pretrained Weights
 
-MambaVision pretrained weights should be placed under the weights directory and selected via config:
+Spatial-Mamba pretrained weights should be placed under the weights directory and selected via config:
 ```
-/storage2/ChangeDetection/NSST-mamba/NSST_Mamba_v2/Vmamba_weights/
+/storage2/ChangeDetection/NSST-mamba/spatial-mamba/Spatial-Mamba/weights/
 ```
 
 ## License

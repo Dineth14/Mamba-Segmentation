@@ -16,14 +16,32 @@ class Config:
     
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
-    WEIGHTS_PATH: str = "/storage2/ChangeDetection/NSST-mamba/UrbanMamba/Vmamba_weights/ImageNet-1K"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/UrbanMamba/Comparison_Experiments/Vmamba_base_256"
+    WEIGHTS_PATH: str = "auto"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamba_small_256/"
     RESUME_PATH: str = ""
-    VMAMBA_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/NSST_Mamba_v2/Vmamba_weights"
-    VMAMBA_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
-        "tiny": "vssmtiny_dp01_ckpt_epoch_292.pth",
-        "small": "vssmsmall_dp03_ckpt_epoch_238.pth",
-        "base": "vssmbase_dp06_ckpt_epoch_241.pth",
+    VMAMBA_WEIGHT_SET: str = "imagenet1k"  # "imagenet1k" | "ade20k" | "vanilla_ade20k"
+    VMAMBA_WEIGHTS_DIR: str = ""
+    VMAMBA_WEIGHTS_DIR_MAP: Dict[str, str] = field(default_factory=lambda: {
+        "imagenet1k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/ImageNet-1K",
+        "ade20k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/ADE20K_weights",
+        "vanilla_ade20k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/vanilla-vmamba-ADE20K",
+    })
+    VMAMBA_WEIGHTS_FILE_MAP: Dict[str, Dict[str, str]] = field(default_factory=lambda: {
+        "imagenet1k": {
+            "tiny": "vssmtiny_dp01_ckpt_epoch_292.pth",
+            "small": "vssmsmall_dp03_ckpt_epoch_238.pth",
+            "base": "vssmbase_dp06_ckpt_epoch_241.pth",
+        },
+        "ade20k": {
+            "tiny": "upernet_vssm_4xb4-160k_ade20k-512x512_tiny_s_iter_160000.pth",
+            "small": "upernet_vssm_4xb4-160k_ade20k-512x512_small_iter_144000.pth",
+            "base": "upernet_vssm_4xb4-160k_ade20k-512x512_base_iter_160000.pth",
+        },
+        "vanilla_ade20k": {
+            "tiny": "vssmtiny_upernet_4xb4-160k_ade20k-512x512_iter_160000.pth",
+            "small": "vssmsmall_upernet_4xb4-160k_ade20k-512x512_iter_160000.pth",
+            "base": "vssmbase_upernet_4xb4-160k_ade20k-512x512_iter_128000.pth",
+        },
     })
     VMAMBA_DEPTHS_MAP: Dict[str, Tuple[int, ...]] = field(default_factory=lambda: {
         "tiny": (2, 2, 9, 2),
@@ -75,11 +93,26 @@ class Config:
     IGNORE_INDEX: int = 255  # Label to ignore in loss computation
     
     # VMamba variant selection: "tiny" | "small" | "base"
-    VMAMBA_VARIANT: str = "base"
+    VMAMBA_VARIANT: str = "small"
     # Auto-populated from maps based on VMAMBA_VARIANT
     VMAMBA_DEPTHS: Tuple[int, ...] = (2, 2, 27, 2)
-    VMAMBA_DIMS: Tuple[int, ...] = (128, 256, 512, 1024)
-    VMAMBA_DROP_PATH: float = 0.6
+    VMAMBA_DIMS: Tuple[int, ...] = (96, 192, 384, 768)
+    VMAMBA_DROP_PATH: float = 0.3
+    # VMamba backbone config (auto-resolved from weight set + variant)
+    VMAMBA_SSM_D_STATE: int = 16
+    VMAMBA_SSM_RATIO: float = 2.0
+    VMAMBA_SSM_DT_RANK: str = "auto"
+    VMAMBA_SSM_ACT_LAYER: str = "silu"
+    VMAMBA_SSM_CONV: int = 3
+    VMAMBA_SSM_CONV_BIAS: bool = True
+    VMAMBA_SSM_DROP_RATE: float = 0.0
+    VMAMBA_SSM_INIT: str = "v0"
+    VMAMBA_FORWARD_TYPE: str = "v0"
+    VMAMBA_MLP_RATIO: float = 0.0
+    VMAMBA_GMLP: bool = False
+    VMAMBA_NORM_LAYER: str = "ln"
+    VMAMBA_DOWNSAMPLE_VERSION: str = "v1"
+    VMAMBA_PATCHEMBED_VERSION: str = "v1"
     
     # Decoder
     DECODER_CHANNELS: int = 256
@@ -125,7 +158,7 @@ class Config:
         "Agricultural"
     )
     
-    GPU_ID: int = 0 # CUDA device index
+    GPU_ID: int = 1  # CUDA device index
     
     # ============== Logging ==============
     LOG_INTERVAL: int = 250
@@ -138,12 +171,71 @@ class Config:
         self.VMAMBA_DEPTHS = self.VMAMBA_DEPTHS_MAP.get(variant, self.VMAMBA_DEPTHS)
         self.VMAMBA_DIMS = self.VMAMBA_DIMS_MAP.get(variant, self.VMAMBA_DIMS)
         self.VMAMBA_DROP_PATH = self.VMAMBA_DROP_PATH_MAP.get(variant, self.VMAMBA_DROP_PATH)
+        weight_set = (self.VMAMBA_WEIGHT_SET or "imagenet1k").lower()
+        if weight_set not in self.VMAMBA_WEIGHTS_DIR_MAP:
+            raise ValueError(f"Unsupported VMAMBA_WEIGHT_SET '{self.VMAMBA_WEIGHT_SET}'")
+        self.VMAMBA_WEIGHTS_DIR = self.VMAMBA_WEIGHTS_DIR_MAP[weight_set]
         if self.WEIGHTS_PATH and os.path.isdir(self.WEIGHTS_PATH):
             self.VMAMBA_WEIGHTS_DIR = self.WEIGHTS_PATH
             self.WEIGHTS_PATH = ""
         if not self.WEIGHTS_PATH or self.WEIGHTS_PATH.lower() == "auto":
-            weight_name = self.VMAMBA_WEIGHTS_MAP.get(variant, "")
+            weight_map = self.VMAMBA_WEIGHTS_FILE_MAP.get(weight_set, {})
+            weight_name = weight_map.get(variant, "")
             self.WEIGHTS_PATH = os.path.join(self.VMAMBA_WEIGHTS_DIR, weight_name) if weight_name else ""
+        backbone_cfg = {
+            "ssm_d_state": 16,
+            "ssm_ratio": 2.0,
+            "ssm_dt_rank": "auto",
+            "ssm_act_layer": "silu",
+            "ssm_conv": 3,
+            "ssm_conv_bias": True,
+            "ssm_drop_rate": 0.0,
+            "ssm_init": "v0",
+            "forward_type": "v0",
+            "mlp_ratio": 0.0,
+            "gmlp": False,
+            "norm_layer": "ln",
+            "downsample_version": "v1",
+            "patchembed_version": "v1",
+        }
+        if weight_set == "ade20k":
+            backbone_cfg.update({
+                "ssm_d_state": 1,
+                "ssm_ratio": 2.0,
+                "ssm_conv_bias": False,
+                "forward_type": "v05_noz",
+                "mlp_ratio": 4.0,
+                "norm_layer": "ln2d",
+                "downsample_version": "v3",
+                "patchembed_version": "v2",
+            })
+            if variant == "tiny":
+                backbone_cfg["ssm_ratio"] = 1.0
+        elif weight_set == "vanilla_ade20k":
+            backbone_cfg.update({
+                "ssm_d_state": 16,
+                "ssm_ratio": 2.0,
+                "ssm_conv_bias": True,
+                "forward_type": "v0",
+                "mlp_ratio": 0.0,
+                "norm_layer": "ln",
+                "downsample_version": "v1",
+                "patchembed_version": "v1",
+            })
+        self.VMAMBA_SSM_D_STATE = backbone_cfg["ssm_d_state"]
+        self.VMAMBA_SSM_RATIO = backbone_cfg["ssm_ratio"]
+        self.VMAMBA_SSM_DT_RANK = backbone_cfg["ssm_dt_rank"]
+        self.VMAMBA_SSM_ACT_LAYER = backbone_cfg["ssm_act_layer"]
+        self.VMAMBA_SSM_CONV = backbone_cfg["ssm_conv"]
+        self.VMAMBA_SSM_CONV_BIAS = backbone_cfg["ssm_conv_bias"]
+        self.VMAMBA_SSM_DROP_RATE = backbone_cfg["ssm_drop_rate"]
+        self.VMAMBA_SSM_INIT = backbone_cfg["ssm_init"]
+        self.VMAMBA_FORWARD_TYPE = backbone_cfg["forward_type"]
+        self.VMAMBA_MLP_RATIO = backbone_cfg["mlp_ratio"]
+        self.VMAMBA_GMLP = backbone_cfg["gmlp"]
+        self.VMAMBA_NORM_LAYER = backbone_cfg["norm_layer"]
+        self.VMAMBA_DOWNSAMPLE_VERSION = backbone_cfg["downsample_version"]
+        self.VMAMBA_PATCHEMBED_VERSION = backbone_cfg["patchembed_version"]
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "checkpoints"), exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "logs"), exist_ok=True)

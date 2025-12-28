@@ -1,8 +1,8 @@
 """
 UrbanMamba Model Assembly
 =========================
-RGB-only VMamba segmentation model combining:
-- RGBEncoder (VMamba variants)
+RGB-only NSSTMamba segmentation model combining:
+- RGBEncoder (Spatial-Mamba variants)
 - Lightweight convolutional decoder (U-Net style) with optional auxiliary head
 """
 
@@ -20,33 +20,23 @@ class NSSTMamba(nn.Module):
     UrbanMamba Semantic Segmentation Model.
     
     RGB-only architecture combining:
-    - VMamba backbone for RGB spatial features
+    - Spatial-Mamba backbone for RGB spatial features
     - Lightweight U-Net decoder with optional deep supervision
     """
     
     def __init__(
         self,
         num_classes: int = 7,
-        encoder_dims: Tuple[int, ...] = (96, 192, 384, 768),
+        encoder_dims: Tuple[int, ...] = (64, 128, 256, 512),
         decoder_channels: int = 256,
         drop_path_rate: float = 0.3,
-        encoder_depths: Tuple[int, ...] = (2, 2, 27, 2),
+        encoder_depths: Tuple[int, ...] = (2, 4, 21, 5),
         pretrained_rgb: bool = True,
         weights_path: Optional[str] = None,
-        ssm_d_state: int = 16,
-        ssm_ratio: float = 2.0,
-        ssm_dt_rank: str = "auto",
-        ssm_act_layer: str = "silu",
-        ssm_conv: int = 3,
-        ssm_conv_bias: bool = True,
-        ssm_drop_rate: float = 0.0,
-        ssm_init: str = "v0",
-        forward_type: str = "v0",
-        mlp_ratio: float = 0.0,
-        gmlp: bool = False,
-        norm_layer: str = "ln",
-        downsample_version: str = "v1",
-        patchembed_version: str = "v1",
+        encoder_variant: str = "small",
+        d_state: int = 1,
+        dt_init: str = "random",
+        mlp_ratio: float = 4.0
     ):
         super().__init__()
         
@@ -54,27 +44,17 @@ class NSSTMamba(nn.Module):
         self.encoder_dims = encoder_dims
         
         # ============== Encoders ==============
-        # RGB Encoder (VMamba variant)
+        # RGB Encoder (Spatial-Mamba variant)
         self.rgb_encoder = RGBEncoder(
             depths=encoder_depths,
             dims=encoder_dims,
             drop_path_rate=drop_path_rate,
             pretrained=pretrained_rgb,
             weights_path=weights_path,
-            ssm_d_state=ssm_d_state,
-            ssm_ratio=ssm_ratio,
-            ssm_dt_rank=ssm_dt_rank,
-            ssm_act_layer=ssm_act_layer,
-            ssm_conv=ssm_conv,
-            ssm_conv_bias=ssm_conv_bias,
-            ssm_drop_rate=ssm_drop_rate,
-            ssm_init=ssm_init,
-            forward_type=forward_type,
-            mlp_ratio=mlp_ratio,
-            gmlp=gmlp,
-            norm_layer=norm_layer,
-            downsample_version=downsample_version,
-            patchembed_version=patchembed_version,
+            model_variant=encoder_variant,
+            d_state=d_state,
+            dt_init=dt_init,
+            mlp_ratio=mlp_ratio
         )
         
         # ============== Decoder ==============
@@ -134,14 +114,14 @@ class NSSTMamba(nn.Module):
         Get parameter groups with differential learning rates.
         
         Args:
-            lr_backbone: Learning rate for VMamba backbone
+            lr_backbone: Learning rate for Spatial-Mamba backbone
             lr_head: Learning rate for other components
             weight_decay: Weight decay
         
         Returns:
             List of parameter group dicts for optimizer
         """
-        # Backbone parameters (VMamba)
+        # Backbone parameters (Spatial-Mamba)
         backbone_params = []
         backbone_params_no_decay = []
         
@@ -226,26 +206,16 @@ def build_model(cfg: Config) -> NSSTMamba:
     """Build UrbanMamba model from config."""
     model = NSSTMamba(
         num_classes=cfg.NUM_CLASSES,
-        encoder_dims=cfg.VMAMBA_DIMS,
+        encoder_dims=cfg.SPATIALMAMBA_DIMS,
         decoder_channels=cfg.DECODER_CHANNELS,
-        drop_path_rate=cfg.VMAMBA_DROP_PATH,
-        encoder_depths=cfg.VMAMBA_DEPTHS,
+        drop_path_rate=cfg.SPATIALMAMBA_DROP_PATH,
+        encoder_depths=cfg.SPATIALMAMBA_DEPTHS,
         pretrained_rgb=True,
         weights_path=cfg.WEIGHTS_PATH,
-        ssm_d_state=cfg.VMAMBA_SSM_D_STATE,
-        ssm_ratio=cfg.VMAMBA_SSM_RATIO,
-        ssm_dt_rank=cfg.VMAMBA_SSM_DT_RANK,
-        ssm_act_layer=cfg.VMAMBA_SSM_ACT_LAYER,
-        ssm_conv=cfg.VMAMBA_SSM_CONV,
-        ssm_conv_bias=cfg.VMAMBA_SSM_CONV_BIAS,
-        ssm_drop_rate=cfg.VMAMBA_SSM_DROP_RATE,
-        ssm_init=cfg.VMAMBA_SSM_INIT,
-        forward_type=cfg.VMAMBA_FORWARD_TYPE,
-        mlp_ratio=cfg.VMAMBA_MLP_RATIO,
-        gmlp=cfg.VMAMBA_GMLP,
-        norm_layer=cfg.VMAMBA_NORM_LAYER,
-        downsample_version=cfg.VMAMBA_DOWNSAMPLE_VERSION,
-        patchembed_version=cfg.VMAMBA_PATCHEMBED_VERSION,
+        encoder_variant=cfg.SPATIALMAMBA_VARIANT,
+        d_state=cfg.SPATIALMAMBA_D_STATE,
+        dt_init=cfg.SPATIALMAMBA_DT_INIT,
+        mlp_ratio=cfg.SPATIALMAMBA_MLP_RATIO
     )
     return model
 
@@ -259,9 +229,10 @@ if __name__ == "__main__":
     print("\nBuilding NSSTMamba model...")
     model = NSSTMamba(
         num_classes=7,
-        encoder_dims=(96, 192, 384, 768),
+        encoder_dims=(64, 128, 256, 512),
         decoder_channels=256,
-        pretrained_rgb=False  # Skip pretrained for test
+        pretrained_rgb=False,  # Skip pretrained for test
+        encoder_variant="tiny"
     ).to(device)
     
     # Count parameters
