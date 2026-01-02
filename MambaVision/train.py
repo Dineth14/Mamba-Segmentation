@@ -271,7 +271,7 @@ def train(config: Config, resume_path: str = None):
     criterion = TriBraidLoss(
         ignore_index=255,
         focal_gamma=2.0,
-        boundary_weight=0.5
+        boundary_weight=config.BOUNDARY_WEIGHT
     )
     
     # Create evaluator
@@ -331,6 +331,8 @@ def train(config: Config, resume_path: str = None):
         # Forward pass with AMP
         optimizer.zero_grad()
         
+        boundary_weight = config.BOUNDARY_WEIGHT if iteration >= config.BOUNDARY_WARMUP_ITERS else 0.0
+        criterion.boundary_weight = boundary_weight
         with autocast(enabled=config.USE_AMP):
             outputs = model(rgb)
             loss, loss_dict = criterion(outputs, mask)

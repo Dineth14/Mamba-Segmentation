@@ -16,10 +16,10 @@ class Config:
     
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
-    WEIGHTS_PATH: str = "/storage2/ChangeDetection/NSST-mamba/mamba-segmentations/mamba_vision/UrbanMamba/weights/1k"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/mambavision_tiny2_256"
+    WEIGHTS_PATH: str = "auto"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/mambavision_base_640"
     RESUME_PATH: str = ""
-    MAMBAVISION_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/mamba-segmentations/mamba_vision/UrbanMamba/weights/1k"
+    MAMBAVISION_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/MambaVision/weights/1k"
     MAMBAVISION_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
         "tiny": "mambavision_tiny_1k.pth.tar",
         "tiny2": "mambavision_tiny2_1k.pth.tar",
@@ -78,9 +78,9 @@ class Config:
     
     # ============== Training ==============
     BATCH_SIZE: int = 4 
-    CROP_SIZE: int = 256  # Random crop size during training
-    MAX_ITERS: int = 100000  # Total training iterations
-    VAL_INTERVAL: int = 5000  # Validate every N iterations
+    CROP_SIZE: int = 640  # Random crop size during training
+    MAX_ITERS: int = 50000  # Total training iterations
+    VAL_INTERVAL: int = 2500  # Validate every N iterations
     NUM_WORKERS: int = 8  # DataLoader workers
     
     # ============== Model ==============
@@ -89,11 +89,11 @@ class Config:
     
     # MambaVision variant selection: "tiny" | "tiny2" | "small" | "base" |
     # "large" | "large2" 
-    MAMBAVISION_VARIANT: str = "tiny2"
+    MAMBAVISION_VARIANT: str = "base"
     # Auto-populated from maps based on MAMBAVISION_VARIANT
-    MAMBAVISION_DEPTHS: Tuple[int, ...] = (1, 3, 11, 4)
-    MAMBAVISION_DIMS: Tuple[int, ...] = (80, 160, 320, 640)
-    MAMBAVISION_DROP_PATH: float = 0.2
+    MAMBAVISION_DEPTHS: Tuple[int, ...] = (3, 3, 10, 5)
+    MAMBAVISION_DIMS: Tuple[int, ...] = (128, 256, 512, 1024)
+    MAMBAVISION_DROP_PATH: float = 0.3
     
     # Decoder
     DECODER_CHANNELS: int = 256
@@ -103,15 +103,20 @@ class Config:
     LR_HEAD: float = 3e-4  # Decoder and other components learning rate
     WEIGHT_DECAY: float = 0.05
     POLY_POWER: float = 0.9  # Polynomial LR decay power
+    AUTO_LR_SCALE: bool = True
+    LR_SCALE_LARGE: float = 0.5
     
     # Mixed Precision
     USE_AMP: bool = True
+    DISABLE_AMP_FOR_LARGE: bool = True
     
     # Gradient clipping
     GRAD_CLIP: float = 1.0
     
     # Focal Loss
     FOCAL_GAMMA: float = 2.0
+    BOUNDARY_WEIGHT: float = 0.5
+    BOUNDARY_WARMUP_ITERS: int = 10000
     
     # ============== Data Augmentation ==============
     HORIZONTAL_FLIP_PROB: float = 0.5
@@ -149,6 +154,11 @@ class Config:
         self.MAMBAVISION_DEPTHS = self.MAMBAVISION_DEPTHS_MAP.get(variant, self.MAMBAVISION_DEPTHS)
         self.MAMBAVISION_DIMS = self.MAMBAVISION_DIMS_MAP.get(variant, self.MAMBAVISION_DIMS)
         self.MAMBAVISION_DROP_PATH = self.MAMBAVISION_DROP_PATH_MAP.get(variant, self.MAMBAVISION_DROP_PATH)
+        if self.AUTO_LR_SCALE and variant in ("large", "large2"):
+            self.LR_BACKBONE *= self.LR_SCALE_LARGE
+            self.LR_HEAD *= self.LR_SCALE_LARGE
+        if self.DISABLE_AMP_FOR_LARGE and variant in ("large", "large2"):
+            self.USE_AMP = False
         if self.WEIGHTS_PATH and os.path.isdir(self.WEIGHTS_PATH):
             self.MAMBAVISION_WEIGHTS_DIR = self.WEIGHTS_PATH
             self.WEIGHTS_PATH = ""

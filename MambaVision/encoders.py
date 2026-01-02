@@ -9,7 +9,6 @@ from __future__ import annotations
 
 import os
 import sys
-from collections import OrderedDict
 from typing import List, Tuple, Optional
 
 import torch
@@ -95,38 +94,21 @@ class RGBEncoder(nn.Module):
     def load_pretrained_weights(self, path: str) -> None:
         """Load pretrained weights into MambaVision backbone."""
         if not os.path.exists(path):
-            print(f"Warning: Pretrained weights not found at {path}")
-            return
+            raise FileNotFoundError(f"Pretrained weights not found at {path}")
 
         print(f"Loading pretrained weights from {path}...")
         try:
-            checkpoint = torch.load(path, map_location="cpu")
+            import argparse
+
+            torch.serialization.add_safe_globals([argparse.Namespace])
+        except Exception:
+            pass
+        try:
+            self.backbone._load_state_dict(path, strict=False)
         except Exception as exc:
             raise RuntimeError(
                 f"Failed to load pretrained weights at {path}: {exc}"
             ) from exc
-
-        if "model" in checkpoint:
-            state_dict = checkpoint["model"]
-        elif "state_dict" in checkpoint:
-            state_dict = checkpoint["state_dict"]
-        else:
-            state_dict = checkpoint
-
-        cleaned_state_dict = OrderedDict()
-        for key, value in state_dict.items():
-            new_key = key
-            if new_key.startswith("module."):
-                new_key = new_key[len("module."):]
-            if any(skip in new_key for skip in ("head.", "classifier.", "fc.")):
-                continue
-            cleaned_state_dict[new_key] = value
-
-        missing, unexpected = self.backbone.load_state_dict(cleaned_state_dict, strict=False)
-        if missing:
-            print(f"  Missing keys: {len(missing)}")
-        if unexpected:
-            print(f"  Unexpected keys: {len(unexpected)}")
 
     def forward(self, x: torch.Tensor) -> List[torch.Tensor]:
         """

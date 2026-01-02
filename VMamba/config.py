@@ -17,7 +17,7 @@ class Config:
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamba_small_256/"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamba_base_640/"
     RESUME_PATH: str = ""
     VMAMBA_WEIGHT_SET: str = "imagenet1k"  # "imagenet1k" | "ade20k" | "vanilla_ade20k"
     VMAMBA_WEIGHTS_DIR: str = ""
@@ -80,9 +80,9 @@ class Config:
     
     # ============== Training ==============
     BATCH_SIZE: int = 4 
-    CROP_SIZE: int = 256  # Random crop size during training
-    MAX_ITERS: int = 100000  # Total training iterations
-    VAL_INTERVAL: int = 5000  # Validate every N iterations
+    CROP_SIZE: int = 640  # Random crop size during training
+    MAX_ITERS: int = 20000  # Total training iterations
+    VAL_INTERVAL: int = 2500  # Validate every N iterations
     NUM_WORKERS: int = 8  # DataLoader workers
     PREFETCH_FACTOR: int = 4  # Batches prefetched per worker
     PIN_MEMORY: bool = True
@@ -93,7 +93,7 @@ class Config:
     IGNORE_INDEX: int = 255  # Label to ignore in loss computation
     
     # VMamba variant selection: "tiny" | "small" | "base"
-    VMAMBA_VARIANT: str = "small"
+    VMAMBA_VARIANT: str = "base"
     # Auto-populated from maps based on VMAMBA_VARIANT
     VMAMBA_DEPTHS: Tuple[int, ...] = (2, 2, 27, 2)
     VMAMBA_DIMS: Tuple[int, ...] = (96, 192, 384, 768)
@@ -158,7 +158,7 @@ class Config:
         "Agricultural"
     )
     
-    GPU_ID: int = 1  # CUDA device index
+    GPU_ID: int = 0 # CUDA device index
     
     # ============== Logging ==============
     LOG_INTERVAL: int = 250

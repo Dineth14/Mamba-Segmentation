@@ -1,0 +1,48 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+coverage.xml
+.tox/
+.nox/
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build artifacts
+build/
+dist/
+*.egg-info/
+
+# Logs and checkpoints
+*.log
+logs/
+outputs/
+checkpoints/
+tensorboard/
+val_preds/
+
+# Data and caches
+data/
+datasets/
+*.npy
+*.npz
+*.pt
+*.pth
+*.pth.tar
+*.ckpt
+
+# OS/editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+.vscode/
+.idea/
