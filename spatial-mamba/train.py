@@ -11,6 +11,7 @@ Features:
 """
 
 import os
+import sys
 import logging
 from datetime import datetime
 
@@ -23,19 +24,57 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 # Local imports
-from config import Config
+ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+if ROOT_DIR not in sys.path:
+    sys.path.insert(0, ROOT_DIR)
+if "config" in sys.modules:
+    del sys.modules["config"]
+
+for _mod in ("config", "model", "dataset", "losses", "utils"):
+    if _mod in sys.modules:
+        del sys.modules[_mod]
+
+import importlib.util
+
+_local_config_path = os.path.join(ROOT_DIR, "config.py")
+_spec_config = importlib.util.spec_from_file_location("local_config", _local_config_path)
+_local_config = importlib.util.module_from_spec(_spec_config)
+assert _spec_config and _spec_config.loader, "Failed to load local config.py"
+_spec_config.loader.exec_module(_local_config)
+Config = _local_config.Config
 from model import NSSTMamba
 from dataset import build_dataloaders
 from losses import TriBraidLoss
-from utils import (
-    SegmentationEvaluator,
-    AverageMeter,
-    PolynomialDecay,
-    create_optimizer_with_differential_lr,
-    format_metrics_table,
-    save_checkpoint,
-    load_checkpoint
-)
+import importlib.util
+
+_local_utils_path = os.path.join(ROOT_DIR, "utils.py")
+_spec_utils = importlib.util.spec_from_file_location("local_utils", _local_utils_path)
+_local_utils = importlib.util.module_from_spec(_spec_utils)
+assert _spec_utils and _spec_utils.loader, "Failed to load local utils.py"
+_spec_utils.loader.exec_module(_local_utils)
+
+SegmentationEvaluator = _local_utils.SegmentationEvaluator
+AverageMeter = _local_utils.AverageMeter
+PolynomialDecay = _local_utils.PolynomialDecay
+create_optimizer_with_differential_lr = _local_utils.create_optimizer_with_differential_lr
+format_metrics_table = _local_utils.format_metrics_table
+save_checkpoint = _local_utils.save_checkpoint
+load_checkpoint = _local_utils.load_checkpoint
+import importlib.util
+
+_utils_path = os.path.join(ROOT_DIR, "utils.py")
+_spec = importlib.util.spec_from_file_location("local_utils", _utils_path)
+_local_utils = importlib.util.module_from_spec(_spec)
+assert _spec and _spec.loader, "Failed to load local utils.py"
+_spec.loader.exec_module(_local_utils)
+
+SegmentationEvaluator = _local_utils.SegmentationEvaluator
+AverageMeter = _local_utils.AverageMeter
+PolynomialDecay = _local_utils.PolynomialDecay
+create_optimizer_with_differential_lr = _local_utils.create_optimizer_with_differential_lr
+format_metrics_table = _local_utils.format_metrics_table
+save_checkpoint = _local_utils.save_checkpoint
+load_checkpoint = _local_utils.load_checkpoint
 
 
 def _format_flops(flops: float) -> str:

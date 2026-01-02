@@ -17,7 +17,7 @@ class Config:
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
     WEIGHTS_PATH: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/spatial-mamba/weights/imageNet1K"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/spatialmamba_tiny_256"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/spatialmamba_tiny_512"
     RESUME_PATH: str = ""
     SPATIALMAMBA_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/spatial-mamba/weights/imageNet1K"
     SPATIALMAMBA_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
@@ -65,9 +65,9 @@ class Config:
     
     # ============== Training ==============
     BATCH_SIZE: int = 4 
-    CROP_SIZE: int = 256  # Random crop size during training
-    MAX_ITERS: int = 100000  # Total training iterations
-    VAL_INTERVAL: int = 5000  # Validate every N iterations
+    CROP_SIZE: int = 512  # Random crop size during training
+    MAX_ITERS: int = 50000  # Total training iterations
+    VAL_INTERVAL: int = 2500  # Validate every N iterations
     NUM_WORKERS: int = 8  # DataLoader workers
     PREFETCH_FACTOR: int = 4  # Batches prefetched per worker
     PIN_MEMORY: bool = True

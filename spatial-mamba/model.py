@@ -10,7 +10,16 @@ import torch
 import torch.nn as nn
 from typing import List, Tuple, Optional, Dict, Any
 
-from config import Config
+import importlib.util
+import os
+
+_ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+_config_path = os.path.join(_ROOT_DIR, "config.py")
+_spec_config = importlib.util.spec_from_file_location("local_config", _config_path)
+_local_config = importlib.util.module_from_spec(_spec_config)
+assert _spec_config and _spec_config.loader, "Failed to load local config.py"
+_spec_config.loader.exec_module(_local_config)
+Config = _local_config.Config
 from encoders import RGBEncoder
 from light_decoder import LightUNetDecoder
 
