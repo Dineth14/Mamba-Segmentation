@@ -17,7 +17,7 @@ class Config:
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/mambavision_large_512"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/mambavision_base_512"
     RESUME_PATH: str = ""
     MAMBAVISION_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/MambaVision/weights/1k"
     MAMBAVISION_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
@@ -88,10 +88,10 @@ class Config:
     IGNORE_INDEX: int = 255  # Label to ignore in loss computation
     
     # MambaVision variant selection: "tiny" | "tiny2" | "small" | "base" |"large" | "large2" 
-    MAMBAVISION_VARIANT: str = "large"
+    MAMBAVISION_VARIANT: str = "base"
     # Auto-populated from maps based on MAMBAVISION_VARIANT
     MAMBAVISION_DEPTHS: Tuple[int, ...] = (3, 3, 10, 5)
-    MAMBAVISION_DIMS: Tuple[int, ...] = (196, 392, 784, 1568)
+    MAMBAVISION_DIMS: Tuple[int, ...] = (128, 256, 512, 1024)
     MAMBAVISION_DROP_PATH: float = 0.3
     
     # Decoder
@@ -140,7 +140,7 @@ class Config:
         "Agricultural"
     )
     
-    GPU_ID: int = 0 # CUDA device index
+    GPU_ID: int = 1 # CUDA device index
     
     # ============== Logging ==============
     LOG_INTERVAL: int = 250

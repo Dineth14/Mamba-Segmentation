@@ -11,7 +11,6 @@ Features:
 """
 
 import os
-import sys
 import logging
 from datetime import datetime
 
@@ -24,57 +23,19 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 # Local imports
-ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
-if ROOT_DIR not in sys.path:
-    sys.path.insert(0, ROOT_DIR)
-if "config" in sys.modules:
-    del sys.modules["config"]
-
-for _mod in ("config", "model", "dataset", "losses", "utils"):
-    if _mod in sys.modules:
-        del sys.modules[_mod]
-
-import importlib.util
-
-_local_config_path = os.path.join(ROOT_DIR, "config.py")
-_spec_config = importlib.util.spec_from_file_location("local_config", _local_config_path)
-_local_config = importlib.util.module_from_spec(_spec_config)
-assert _spec_config and _spec_config.loader, "Failed to load local config.py"
-_spec_config.loader.exec_module(_local_config)
-Config = _local_config.Config
+from config import Config
 from model import NSSTMamba
 from dataset import build_dataloaders
 from losses import TriBraidLoss
-import importlib.util
-
-_local_utils_path = os.path.join(ROOT_DIR, "utils.py")
-_spec_utils = importlib.util.spec_from_file_location("local_utils", _local_utils_path)
-_local_utils = importlib.util.module_from_spec(_spec_utils)
-assert _spec_utils and _spec_utils.loader, "Failed to load local utils.py"
-_spec_utils.loader.exec_module(_local_utils)
-
-SegmentationEvaluator = _local_utils.SegmentationEvaluator
-AverageMeter = _local_utils.AverageMeter
-PolynomialDecay = _local_utils.PolynomialDecay
-create_optimizer_with_differential_lr = _local_utils.create_optimizer_with_differential_lr
-format_metrics_table = _local_utils.format_metrics_table
-save_checkpoint = _local_utils.save_checkpoint
-load_checkpoint = _local_utils.load_checkpoint
-import importlib.util
-
-_utils_path = os.path.join(ROOT_DIR, "utils.py")
-_spec = importlib.util.spec_from_file_location("local_utils", _utils_path)
-_local_utils = importlib.util.module_from_spec(_spec)
-assert _spec and _spec.loader, "Failed to load local utils.py"
-_spec.loader.exec_module(_local_utils)
-
-SegmentationEvaluator = _local_utils.SegmentationEvaluator
-AverageMeter = _local_utils.AverageMeter
-PolynomialDecay = _local_utils.PolynomialDecay
-create_optimizer_with_differential_lr = _local_utils.create_optimizer_with_differential_lr
-format_metrics_table = _local_utils.format_metrics_table
-save_checkpoint = _local_utils.save_checkpoint
-load_checkpoint = _local_utils.load_checkpoint
+from utils import (
+    SegmentationEvaluator,
+    AverageMeter,
+    PolynomialDecay,
+    create_optimizer_with_differential_lr,
+    format_metrics_table,
+    save_checkpoint,
+    load_checkpoint
+)
 
 
 def _format_flops(flops: float) -> str:
@@ -259,13 +220,12 @@ def train(config: Config, resume_path: str = None):
     
     # Setup logging
     logger = setup_logging(output_dir)
-    logger.info(f"Training UrbanMamba on device: {device}")
+    logger.info(f"Training UrbanMamba (VisionMamba) on device: {device}")
     logger.info(f"Output directory: {output_dir}")
     logger.info(f"Batch size: {config.BATCH_SIZE}")
     logger.info(f"Crop size: {config.CROP_SIZE}")
     logger.info(f"CUDNN benchmark: {config.CUDNN_BENCHMARK}")
     logger.info(f"TF32 enabled: {config.ALLOW_TF32}")
-    logger.info(f"Matmul precision: {config.MATMUL_PRECISION}")
     
     # TensorBoard writer
     writer = SummaryWriter(tensorboard_dir, flush_secs=30)
@@ -278,22 +238,18 @@ def train(config: Config, resume_path: str = None):
     
     # Create model
     logger.info("Creating model...")
-    logger.info("RGB encoder: ENABLED")
-    logger.info(f"Spatial-Mamba variant: {config.SPATIALMAMBA_VARIANT}")
-    logger.info(f"Spatial-Mamba weights: {config.WEIGHTS_PATH}")
-    logger.info(f"Spatial-Mamba depths: {config.SPATIALMAMBA_DEPTHS}")
-    logger.info(f"Spatial-Mamba dims: {config.SPATIALMAMBA_DIMS}")
-    logger.info(f"Spatial-Mamba drop path: {config.SPATIALMAMBA_DROP_PATH}")
+    logger.info("RGB encoder: Vision Mamba (Vim) - 1 Block")
+    logger.info(f"Vim variant: {config.VIM_VARIANT}")
+    logger.info(f"Vim weights: {config.WEIGHTS_PATH}")
+    logger.info(f"Vim depths: {config.VIM_DEPTHS}")
+    logger.info(f"Vim dims: {config.VIM_DIMS}")
+    
     model = NSSTMamba(
         num_classes=config.NUM_CLASSES,
-        encoder_dims=config.SPATIALMAMBA_DIMS,
-        encoder_depths=config.SPATIALMAMBA_DEPTHS,
-        drop_path_rate=config.SPATIALMAMBA_DROP_PATH,
+        encoder_dims=config.VIM_DIMS,
+        encoder_depths=config.VIM_DEPTHS,
+        drop_path_rate=config.VIM_DROP_PATH,
         weights_path=config.WEIGHTS_PATH,
-        encoder_variant=config.SPATIALMAMBA_VARIANT,
-        d_state=config.SPATIALMAMBA_D_STATE,
-        dt_init=config.SPATIALMAMBA_DT_INIT,
-        mlp_ratio=config.SPATIALMAMBA_MLP_RATIO,
     )
     model = model.to(device)
     
@@ -325,10 +281,12 @@ def train(config: Config, resume_path: str = None):
     )
     
     # Create loss function
+    # Note: TriBraidLoss usually handles dict output for aux loss.
+    # We will pass simpler main loss logic since we removed aux head.
     criterion = TriBraidLoss(
         ignore_index=255,
         focal_gamma=2.0,
-        boundary_weight=config.BOUNDARY_WEIGHT
+        boundary_weight=0.5
     )
     
     # Create evaluator
@@ -388,14 +346,18 @@ def train(config: Config, resume_path: str = None):
         # Forward pass with AMP
         optimizer.zero_grad()
         
-        if iteration < config.BOUNDARY_START_ITER:
-            criterion.boundary_weight = 0.0
-        else:
-            criterion.boundary_weight = config.BOUNDARY_WEIGHT
-
         with autocast(enabled=config.USE_AMP):
             outputs = model(rgb)
-            loss, loss_dict = criterion(outputs, mask)
+            # outputs is now (main_out, aux_out=None) or just main_out
+            if isinstance(outputs, tuple):
+                 main_out = outputs[0]
+            else:
+                 main_out = outputs
+            
+            # Since TriBraidLoss expects outputs (either Tensor or dict/tuple), 
+            # if we pass a single tensor, it should handle it as main loss only.
+            # We'll repackage as single tensor to be safe.
+            loss, loss_dict = criterion(main_out, mask)
 
         if not torch.isfinite(loss):
             logger.warning(

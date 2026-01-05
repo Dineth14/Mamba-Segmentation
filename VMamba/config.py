@@ -17,7 +17,7 @@ class Config:
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_small_512/"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_base_512/"
     RESUME_PATH: str = ""
     VMAMBA_WEIGHT_SET: str = "imagenet1k"  # "imagenet1k" | "ade20k" | "vanilla_ade20k"
     VMAMBA_WEIGHTS_DIR: str = ""
@@ -93,11 +93,11 @@ class Config:
     IGNORE_INDEX: int = 255  # Label to ignore in loss computation
     
     # VMamba variant selection: "tiny" | "small" | "base"
-    VMAMBA_VARIANT: str = "small"
+    VMAMBA_VARIANT: str = "base"
     # Auto-populated from maps based on VMAMBA_VARIANT
     VMAMBA_DEPTHS: Tuple[int, ...] = (2, 2, 27, 2)
-    VMAMBA_DIMS: Tuple[int, ...] = (96, 192, 384, 768)
-    VMAMBA_DROP_PATH: float = 0.3
+    VMAMBA_DIMS: Tuple[int, ...] = (128, 256, 512, 1024)
+    VMAMBA_DROP_PATH: float = 0.6
     # VMamba backbone config (auto-resolved from weight set + variant)
     VMAMBA_SSM_D_STATE: int = 16
     VMAMBA_SSM_RATIO: float = 2.0
@@ -158,7 +158,7 @@ class Config:
         "Agricultural"
     )
     
-    GPU_ID: int = 1 # CUDA device index
+    GPU_ID: int = 0 # CUDA device index
     
     # ============== Logging ==============
     LOG_INTERVAL: int = 250
