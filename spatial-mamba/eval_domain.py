@@ -22,7 +22,18 @@ from torch.utils.data import DataLoader
 from config import Config
 from dataset import LovedaDataset
 from model import build_model
-from utils import SegmentationEvaluator, format_metrics_table, load_checkpoint
+import importlib.util
+
+_ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+_utils_path = os.path.join(_ROOT_DIR, "utils.py")
+_spec_utils = importlib.util.spec_from_file_location("local_utils", _utils_path)
+_local_utils = importlib.util.module_from_spec(_spec_utils)
+assert _spec_utils and _spec_utils.loader, "Failed to load local utils.py"
+_spec_utils.loader.exec_module(_local_utils)
+
+SegmentationEvaluator = _local_utils.SegmentationEvaluator
+format_metrics_table = _local_utils.format_metrics_table
+load_checkpoint = _local_utils.load_checkpoint
 
 
 def _parse_args() -> argparse.Namespace:

@@ -17,7 +17,7 @@ class Config:
     # ============== Paths ==============
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/VisionMamba_tiny_1block/"
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/VisionMamba_base_512/"
     RESUME_PATH: str = ""
     
     # Vision Mamba Weights Directory
@@ -29,10 +29,10 @@ class Config:
     
     # Vision Mamba Variant: "tiny" | "small" | "base"
     # Available weights:
-    # - tiny: vim_t_midclstok_76p1acc.pth (76.1% acc) | vim_t_midclstok_ft_78p3acc.pth (78.3% acc, fine-tuned)
-    # - small: vim_s_midclstok_80p5acc.pth (80.5% acc) | vim_s_midclstok_ft_81p6acc.pth (81.6% acc, fine-tuned)
-    # - base: vim_b_midclstok_81p9acc.pth (81.9% acc)
-    VIM_VARIANT: str = "tiny"
+    #  tiny: vim_t_midclstok_ft_78p3acc.pth (78.3% acc, fine-tuned)
+    #  small: vim_s_midclstok_ft_81p6acc.pth (81.6% acc, fine-tuned)
+    #  base: vim_b_midclstok_81p9acc.pth (81.9% acc)
+    VIM_VARIANT: str = "base"
     
     # Use fine-tuned weights if available (for tiny and small)
     USE_FINETUNED_WEIGHTS: bool = True
@@ -54,11 +54,9 @@ class Config:
     # Weight mapping: variant -> (base_weights, finetuned_weights)
     VIM_WEIGHTS_MAP: Dict[str, Dict[str, str]] = field(default_factory=lambda: {
         "tiny": {
-            "base": "vim_t_midclstok_76p1acc.pth",
             "finetuned": "vim_t_midclstok_ft_78p3acc.pth",
         },
         "small": {
-            "base": "vim_s_midclstok_80p5acc.pth",
             "finetuned": "vim_s_midclstok_ft_81p6acc.pth",
         },
         "base": {
@@ -143,14 +141,14 @@ class Config:
         "Background", "Building", "Road", "Water", "Barren", "Forest", "Agricultural"
     )
     
-    GPU_ID: int = 0
+    GPU_ID: int = 1
     
     # ============== Logging ==============
     LOG_INTERVAL: int = 250
     
     def __post_init__(self):
         """Resolve paths, dimensions, and weights."""
-        variant = (self.VIM_VARIANT or "tiny").lower()
+        variant = (self.VIM_VARIANT or "base").lower()
         
         # Validate variant
         valid_variants = list(self.VIM_DIMS_MAP.keys())

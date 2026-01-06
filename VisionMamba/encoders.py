@@ -169,11 +169,43 @@ class RGBEncoder(nn.Module):
         # Patch embedding
         x = self.backbone.patch_embed(x)  # (B, L, embed_dim)
         
-        # Positional embedding
+        # Positional embedding with interpolation for different input sizes
         if self.backbone.if_abs_pos_embed:
-            # Vim pos_embed includes space for CLS token if if_cls_token=True
-            # Since we set if_cls_token=False, we use the full pos_embed
-            x = x + self.backbone.pos_embed
+            # Calculate current grid size
+            H_patch = H // self.patch_size
+            W_patch = W // self.patch_size
+            L = H_patch * W_patch
+            
+            # If size matches, use pos_embed directly
+            if x.shape[1] == self.backbone.pos_embed.shape[1]:
+                x = x + self.backbone.pos_embed
+            else:
+                # Interpolate position embeddings to match input size
+                pos_embed = self.backbone.pos_embed
+                # pos_embed is (1, N_orig, C) where N_orig is from initialization
+                # We need to interpolate it to (1, L, C)
+                
+                # Reshape to 2D grid for interpolation
+                N_orig = pos_embed.shape[1]
+                # Assume square grid from initialization (e.g., 14x14=196 for 224x224 image)
+                gs_orig = int(N_orig ** 0.5)
+                
+                # Reshape: (1, N_orig, C) -> (1, C, gs_orig, gs_orig)
+                pos_embed_2d = pos_embed.transpose(1, 2).reshape(1, self.embed_dim, gs_orig, gs_orig)
+                
+                # Interpolate to target size: (1, C, H_patch, W_patch)
+                pos_embed_resized = torch.nn.functional.interpolate(
+                    pos_embed_2d,
+                    size=(H_patch, W_patch),
+                    mode='bicubic',
+                    align_corners=False
+                )
+                
+                # Reshape back: (1, C, H_patch, W_patch) -> (1, L, C)
+                pos_embed_resized = pos_embed_resized.reshape(1, self.embed_dim, -1).transpose(1, 2)
+                
+                x = x + pos_embed_resized
+            
             x = self.backbone.pos_drop(x)
         
         # Apply Vision Mamba blocks

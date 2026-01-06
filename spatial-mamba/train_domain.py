@@ -41,9 +41,9 @@ def main() -> None:
     parser.add_argument("--variant", required=True)
     parser.add_argument("--gpu", type=int, required=True)
     parser.add_argument("--amp", type=int, choices=[0, 1], default=None)
-    parser.add_argument("--iters", type=int, default=50000)
+    parser.add_argument("--iters", type=int, default=25000)
     parser.add_argument("--crop", type=int, default=512)
-    parser.add_argument("--batch", type=int, default=4)
+    parser.add_argument("--batch", type=int, default=12)
     parser.add_argument(
         "--out_root",
         default="/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments",

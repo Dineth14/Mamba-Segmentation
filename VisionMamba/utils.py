@@ -263,7 +263,7 @@ def create_optimizer_with_differential_lr(
     Create AdamW optimizer with differential learning rates.
     
     Args:
-        model: NSSTMamba model
+        model: VisionMambaSegmentation model
         lr_backbone: Learning rate for encoder backbones
         lr_head: Learning rate for decoder/fusion heads
         weight_decay: Weight decay factor

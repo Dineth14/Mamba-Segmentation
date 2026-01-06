@@ -64,7 +64,7 @@ class Config:
     ])
     
     # ============== Training ==============
-    BATCH_SIZE: int = 4
+    BATCH_SIZE: int = 8
     CROP_SIZE: int = 512  # Random crop size during training
     MAX_ITERS: int = 25000  # Total training iterations
     VAL_INTERVAL: int = 2500  # Validate every N iterations

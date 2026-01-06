@@ -1,6 +1,6 @@
 """
 Example usage:
-  cd /storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba
+  cd /storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VisionMamba
   python train_domain.py --variant tiny  --domain urban --gpu 0 --amp 1
   python train_domain.py --variant small --domain rural --gpu 1 --amp 1
 """
@@ -32,7 +32,7 @@ def _build_output_dir(out_root: str, family: str, variant: str, domain: str, cro
 
 
 def main() -> None:
-    parser = argparse.ArgumentParser(description="Domain-specific training wrapper for VMamba UrbanMamba.")
+    parser = argparse.ArgumentParser(description="Domain-specific training wrapper for VisionMamba UrbanMamba.")
     parser.add_argument("--domain", choices=["urban", "rural"], required=True)
     parser.add_argument("--variant", required=True)
     parser.add_argument("--gpu", type=int, required=True)
@@ -48,7 +48,7 @@ def main() -> None:
     args = parser.parse_args()
 
     paths = _domain_paths(args.domain)
-    output_dir = _build_output_dir(args.out_root, "vmamba", args.variant, args.domain, args.crop, args.tag)
+    output_dir = _build_output_dir(args.out_root, "visionmamba", args.variant, args.domain, args.crop, args.tag)
 
     cfg = Config(
         DATA_ROOT=DATA_ROOT,

@@ -1,12 +1,12 @@
 """
-UrbanMamba — Production-grade Semantic Segmentation System
+VisionMamba — Production-grade Semantic Segmentation System
 
-This package implements the UrbanMamba RGB-only architecture for remote sensing
+This package implements the Vision Mamba multi-variant architecture for remote sensing
 image segmentation on the LOVEDA dataset.
 """
 
 from .config import Config
-from .model import NSSTMamba
+from .model import VisionMambaSegmentation, build_model
 from .dataset import LovedaDataset
 from .losses import TriBraidLoss, LovaszSoftmaxV1, FocalLoss, BoundaryLoss
 from .utils import (
@@ -21,7 +21,8 @@ from .utils import (
 
 __all__ = [
     'Config',
-    'NSSTMamba',
+    'VisionMambaSegmentation',
+    'build_model',
     'LovedaDataset',
     'TriBraidLoss',
     'LovaszSoftmaxV1',

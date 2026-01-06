@@ -1,0 +1,311 @@
+Channels:
+ - conda-forge
+ - defaults
+Platform: linux-64
+Collecting package metadata (repodata.json): ...working... done
+Solving environment: ...working... done
+
+## Package Plan ##
+
+  environment location: /userhomes/keshawa17/anaconda3/envs/mamba_new
+
+  added / updated specs:
+    - causal-conv1d
+
+
+The following packages will be downloaded:
+
+    package                    |            build
+    ---------------------------|-----------------
+    _openmp_mutex-4.5          |       7_kmp_llvm           8 KB  conda-forge
+    alsa-lib-1.2.15.1          |       hb03c661_0         572 KB  conda-forge
+    aom-3.9.1                  |       hac33072_0         2.6 MB  conda-forge
+    attr-2.5.2                 |       h39aace5_0          66 KB  conda-forge
+    aws-c-auth-0.9.1           |       h48c9088_3         120 KB  conda-forge
+    aws-c-cal-0.9.2            |       he7b75e1_1          50 KB  conda-forge
+    aws-c-common-0.12.4        |       hb03c661_0         231 KB  conda-forge
+    aws-c-compression-0.3.1    |       h92c474e_6          22 KB  conda-forge
+    aws-c-event-stream-0.5.6   |       h82d11aa_3          58 KB  conda-forge
+    aws-c-http-0.10.4          |       h94feff3_3         219 KB  conda-forge
+    aws-c-io-0.22.0            |       h57f3b0d_1         177 KB  conda-forge
+    aws-c-mqtt-0.13.3          |       h2b1cf8c_6         211 KB  conda-forge
+    aws-c-s3-0.8.6             |       h4e5ac4b_5         134 KB  conda-forge
+    aws-c-sdkutils-0.2.4       |       h92c474e_1          58 KB  conda-forge
+    aws-checksums-0.2.7        |       h92c474e_2          75 KB  conda-forge
+    aws-crt-cpp-0.34.4         |       h60c762c_0         399 KB  conda-forge
+    aws-sdk-cpp-1.11.606       |       h32384e2_4         3.2 MB  conda-forge
+    azure-core-cpp-1.16.0      |       h3a458e0_1         344 KB  conda-forge
+    azure-identity-cpp-1.12.0  |       ha729027_0         236 KB  conda-forge
+    azure-storage-blobs-cpp-12.14.0|       hb1c9500_1         564 KB  conda-forge
+    azure-storage-common-cpp-12.10.0|       hebae86a_2         145 KB  conda-forge
+    azure-storage-files-datalake-cpp-12.12.0|       h8b27e44_3         293 KB  conda-forge
+    causal-conv1d-1.5.4        |cuda129py311h2271db6_0        85.4 MB  conda-forge
+    cuda-version-12.9          |       h4f385c5_3          21 KB  conda-forge
+    ffmpeg-8.0.0               | gpl_h1007c2e_505        11.9 MB  conda-forge
+    gdk-pixbuf-2.42.12         |       h2b0a6b4_3         566 KB  conda-forge
+    glslang-15.4.0             |       h7d2aa7d_0         1.3 MB  conda-forge
+    grpcio-1.73.1              |  py311h46a3a17_1         873 KB  conda-forge
+    harfbuzz-11.4.5            |       h15599e2_0         2.3 MB  conda-forge
+    intel-gmmlib-22.9.0        |       hb700be7_0         986 KB  conda-forge
+    intel-media-driver-25.3.4  |       hecca717_0         8.0 MB  conda-forge
+    kaldi-5.5.1172             |   cpu_ha6a0dec_2        20.6 MB  conda-forge
+    level-zero-1.26.3          |       hb700be7_0         652 KB  conda-forge
+    libabseil-20250512.1       | cxx17_hba17884_0         1.2 MB  conda-forge
+    libarrow-21.0.0            |   h56a6dad_8_cpu         5.9 MB  conda-forge
+    libarrow-acero-21.0.0      |   h635bf11_8_cpu         568 KB  conda-forge
+    libarrow-compute-21.0.0    |   h8c2c5c3_8_cpu         2.9 MB  conda-forge
+    libarrow-dataset-21.0.0    |   h635bf11_8_cpu         566 KB  conda-forge
+    libarrow-substrait-21.0.0  |   h3f74fd7_8_cpu         472 KB  conda-forge
+    libass-0.17.4              |       h96ad9f0_0         149 KB  conda-forge
+    libavif16-1.3.0            |       h6395336_2         136 KB  conda-forge
+    libblas-3.9.0              |   26_linux64_mkl          16 KB  conda-forge
+    libcap-2.77                |       h3ff7636_0         119 KB  conda-forge
+    libcblas-3.9.0             |   26_linux64_mkl          16 KB  conda-forge
+    libcufile-1.14.1.1         |       hbc026e6_1         947 KB  conda-forge
+    libcurand-10.3.10.19       |       h676940d_1        44.1 MB  conda-forge
+    libcurl-8.17.0             |       h4e3cde8_1         449 KB  conda-forge
+    libde265-1.0.15            |       h00ab1b0_0         402 KB  conda-forge
+    libflac-1.5.0              |       he200343_1         415 KB  conda-forge
+    libglib-2.84.3             |       hf39c6af_0         3.8 MB  conda-forge
+    libgoogle-cloud-2.39.0     |       hdb79228_0         1.2 MB  conda-forge
+    libgoogle-cloud-storage-2.39.0|       hdbdcf42_0         785 KB  conda-forge
+    libgrpc-1.73.1             |       h3288cfb_1         8.0 MB  conda-forge
+    libheif-1.19.7             | gpl_hc18d805_100         583 KB  conda-forge
+    libhwloc-2.12.1            |default_h3d81e11_1000         2.3 MB  conda-forge
+    liblapack-3.9.0            |   26_linux64_mkl          16 KB  conda-forge
+    liblapacke-3.9.0           |   26_linux64_mkl          16 KB  conda-forge
+    libnghttp2-1.67.0          |       had1ee68_0         651 KB  conda-forge
+    libnl-3.11.0               |       hb9d3cd8_0         724 KB  conda-forge
+    libopentelemetry-cpp-1.21.0|       hb9b0907_1         865 KB  conda-forge
+    libopentelemetry-cpp-headers-1.21.0|       ha770c72_1         355 KB  conda-forge
+    libopenvino-2025.2.0       |       hb617929_1         6.0 MB  conda-forge
+    libopenvino-auto-batch-plugin-2025.2.0|       hed573e4_1         112 KB  conda-forge
+    libopenvino-auto-plugin-2025.2.0|       hed573e4_1         245 KB  conda-forge
+    libopenvino-hetero-plugin-2025.2.0|       hd41364c_1         190 KB  conda-forge
+    libopenvino-intel-cpu-plugin-2025.2.0|       hb617929_1        11.8 MB  conda-forge
+    libopenvino-intel-gpu-plugin-2025.2.0|       hb617929_1        10.3 MB  conda-forge
+    libopenvino-intel-npu-plugin-2025.2.0|       hb617929_1         1.2 MB  conda-forge
+    libopenvino-ir-frontend-2025.2.0|       hd41364c_1         200 KB  conda-forge
+    libopenvino-onnx-frontend-2025.2.0|       h1862bb8_1         1.6 MB  conda-forge
+    libopenvino-paddle-frontend-2025.2.0|       h1862bb8_1         727 KB  conda-forge
+    libopenvino-pytorch-frontend-2025.2.0|       hecca717_1         1.2 MB  conda-forge
+    libopenvino-tensorflow-frontend-2025.2.0|       h0767aad_1         1.3 MB  conda-forge
+    libopenvino-tensorflow-lite-frontend-2025.2.0|       hecca717_1         485 KB  conda-forge
+    libopus-1.6                |       h0fd0de7_0         317 KB  conda-forge
+    libparquet-21.0.0          |   h790f06f_8_cpu         1.3 MB  conda-forge
+    libprotobuf-6.31.1         |       h49aed37_4         4.2 MB  conda-forge
+    libre2-11-2025.11.05       |       h7b12aa8_0         206 KB  conda-forge
+    librsvg-2.58.4             |       he92a37e_3         6.2 MB  conda-forge
+    libsndfile-1.2.2           |       hc7d488a_2         347 KB  conda-forge
+    libsystemd0-258.3          |       h6569c3e_0         512 KB  conda-forge
+    libthrift-0.22.0           |       h454ac66_1         414 KB  conda-forge
+    libtorch-2.7.1             |cpu_mkl_hf38bc2d_103        55.7 MB  conda-forge
+    libudev1-258.3             |       h6569c3e_0         163 KB  conda-forge
+    libunwind-1.6.2            |       h9c3ff4c_0          74 KB  conda-forge
+    liburing-2.10              |       h84d6215_0         122 KB  conda-forge
+    libusb-1.0.29              |       h73b1eb8_0          87 KB  conda-forge
+    libutf8proc-2.11.2         |       hfe17d71_0          84 KB  conda-forge
+    libuv-1.51.0               |       hb03c661_1         874 KB  conda-forge
+    libvorbis-1.3.7            |       h54a6638_2         279 KB  conda-forge
+    libvpl-2.15.0              |       h54a6638_1         281 KB  conda-forge
+    libvpx-1.14.1              |       hac33072_0         999 KB  conda-forge
+    libxkbcommon-1.11.0        |       he8b52b9_0         773 KB  conda-forge
+    llvm-openmp-20.1.8         |       h4922eb0_0         3.1 MB  conda-forge
+    mkl-2024.2.2               |      ha770c72_17       119.2 MB  conda-forge
+    openfst-1.8.4              |       h84d6215_1         5.2 MB  conda-forge
+    openh264-2.6.0             |       hc22cd8d_0         714 KB  conda-forge
+    optree-0.18.0              |  py311hdf67eae_0         431 KB  conda-forge
+    orc-2.2.1                  |       hd747db4_0         1.3 MB  conda-forge
+    pango-1.56.4               |       hadf4263_0         445 KB  conda-forge
+    protobuf-6.31.1            |  py311h425ed32_2         475 KB  conda-forge
+    pugixml-1.15               |       h3f63f65_0         116 KB  conda-forge
+    pyarrow-21.0.0             |  py311h38be061_1          26 KB  conda-forge
+    pyarrow-core-21.0.0        |py311h342b5a4_1_cpu         5.1 MB  conda-forge
+    pybind11-3.0.1             |     pyh7a1b43c_0         227 KB  conda-forge
+    pybind11-global-3.0.1      |     pyhc7ab6ef_0         224 KB  conda-forge
+    pytorch-2.7.1              |cpu_mkl_py311_h7bde0a3_103        28.4 MB  conda-forge
+    rav1e-0.7.1                |       h8fae777_3         4.9 MB  conda-forge
+    rdma-core-60.0             |       hecca717_0         1.2 MB  conda-forge
+    re2-2025.11.05             |       h5301d42_0          27 KB  conda-forge
+    s2n-1.5.26                 |       h5ac9029_0         382 KB  conda-forge
+    sdl2-2.32.54               |       h3f2d84a_0         573 KB  conda-forge
+    sdl3-3.2.16                |       he3e324a_0         1.9 MB  conda-forge
+    shaderc-2025.3             |       h3e344bc_1         111 KB  conda-forge
+    sleef-3.9.0                |       ha0421bc_0         1.9 MB  conda-forge
+    snappy-1.2.2               |       h03e3b7b_1          45 KB  conda-forge
+    spirv-tools-2025.4         |       hb700be7_0         2.1 MB  conda-forge
+    svt-av1-3.1.2              |       hecca717_0         2.6 MB  conda-forge
+    tbb-2021.13.0              |       h8d10470_4         168 KB  conda-forge
+    torchaudio-2.8.0           |cpu_py311hcb2ac7c_1         4.5 MB  conda-forge
+    torchcodec-0.8.1           |cpu_py311_ha763acb_1         454 KB  conda-forge
+    torchvision-0.24.0         |cpu_py311_h9bcb066_0         1.5 MB  conda-forge
+    torchvision-extra-decoders-0.0.2|  py311ha44aed6_3          64 KB  conda-forge
+    xkeyboard-config-2.46      |       hb03c661_0         388 KB  conda-forge
+    xorg-libxcursor-1.2.3      |       hb9d3cd8_0          32 KB  conda-forge
+    xorg-libxscrnsaver-1.2.4   |       hb9d3cd8_0          14 KB  conda-forge
+    ------------------------------------------------------------
+                                           Total:       515.4 MB
+
+The following NEW packages will be INSTALLED:
+
+  alsa-lib           conda-forge/linux-64::alsa-lib-1.2.15.1-hb03c661_0 
+  attr               conda-forge/linux-64::attr-2.5.2-h39aace5_0 
+  cairo              conda-forge/linux-64::cairo-1.18.4-h3394656_0 
+  causal-conv1d      conda-forge/linux-64::causal-conv1d-1.5.4-cuda129py311h2271db6_0 
+  dav1d              conda-forge/linux-64::dav1d-1.2.1-hd590300_0 
+  dbus               conda-forge/linux-64::dbus-1.16.2-h3c4dab8_0 
+  fribidi            conda-forge/linux-64::fribidi-1.0.16-hb03c661_0 
+  gdk-pixbuf         conda-forge/linux-64::gdk-pixbuf-2.42.12-h2b0a6b4_3 
+  glslang            conda-forge/linux-64::glslang-15.4.0-h7d2aa7d_0 
+  graphite2          conda-forge/linux-64::graphite2-1.3.14-hecca717_2 
+  harfbuzz           conda-forge/linux-64::harfbuzz-11.4.5-h15599e2_0 
+  intel-gmmlib       conda-forge/linux-64::intel-gmmlib-22.9.0-hb700be7_0 
+  intel-media-driver conda-forge/linux-64::intel-media-driver-25.3.4-hecca717_0 
+  kaldi              conda-forge/linux-64::kaldi-5.5.1172-cpu_ha6a0dec_2 
+  level-zero         conda-forge/linux-64::level-zero-1.26.3-hb700be7_0 
+  libarrow-compute   conda-forge/linux-64::libarrow-compute-21.0.0-h8c2c5c3_8_cpu 
+  libass             conda-forge/linux-64::libass-0.17.4-h96ad9f0_0 
+  libavif16          conda-forge/linux-64::libavif16-1.3.0-h6395336_2 
+  libcap             conda-forge/linux-64::libcap-2.77-h3ff7636_0 
+  libde265           conda-forge/linux-64::libde265-1.0.15-h00ab1b0_0 
+  libflac            conda-forge/linux-64::libflac-1.5.0-he200343_1 
+  libgfortran        conda-forge/linux-64::libgfortran-15.2.0-h69a702a_16 
+  libgfortran5       conda-forge/linux-64::libgfortran5-15.2.0-h68bc16d_16 
+  libglib            conda-forge/linux-64::libglib-2.84.3-hf39c6af_0 
+  libheif            conda-forge/linux-64::libheif-1.19.7-gpl_hc18d805_100 
+  libhwloc           conda-forge/linux-64::libhwloc-2.12.1-default_h3d81e11_1000 
+  liblapacke         conda-forge/linux-64::liblapacke-3.9.0-26_linux64_mkl 
+  libnl              conda-forge/linux-64::libnl-3.11.0-hb9d3cd8_0 
+  libogg             conda-forge/linux-64::libogg-1.3.5-hd0c01bc_1 
+  libopenvino        conda-forge/linux-64::libopenvino-2025.2.0-hb617929_1 
+  libopenvino-auto-~ conda-forge/linux-64::libopenvino-auto-batch-plugin-2025.2.0-hed573e4_1 
+  libopenvino-auto-~ conda-forge/linux-64::libopenvino-auto-plugin-2025.2.0-hed573e4_1 
+  libopenvino-heter~ conda-forge/linux-64::libopenvino-hetero-plugin-2025.2.0-hd41364c_1 
+  libopenvino-intel~ conda-forge/linux-64::libopenvino-intel-cpu-plugin-2025.2.0-hb617929_1 
+  libopenvino-intel~ conda-forge/linux-64::libopenvino-intel-gpu-plugin-2025.2.0-hb617929_1 
+  libopenvino-intel~ conda-forge/linux-64::libopenvino-intel-npu-plugin-2025.2.0-hb617929_1 
+  libopenvino-ir-fr~ conda-forge/linux-64::libopenvino-ir-frontend-2025.2.0-hd41364c_1 
+  libopenvino-onnx-~ conda-forge/linux-64::libopenvino-onnx-frontend-2025.2.0-h1862bb8_1 
+  libopenvino-paddl~ conda-forge/linux-64::libopenvino-paddle-frontend-2025.2.0-h1862bb8_1 
+  libopenvino-pytor~ conda-forge/linux-64::libopenvino-pytorch-frontend-2025.2.0-hecca717_1 
+  libopenvino-tenso~ conda-forge/linux-64::libopenvino-tensorflow-frontend-2025.2.0-h0767aad_1 
+  libopenvino-tenso~ conda-forge/linux-64::libopenvino-tensorflow-lite-frontend-2025.2.0-hecca717_1 
+  libopus            conda-forge/linux-64::libopus-1.6-h0fd0de7_0 
+  librsvg            conda-forge/linux-64::librsvg-2.58.4-he92a37e_3 
+  libsndfile         conda-forge/linux-64::libsndfile-1.2.2-hc7d488a_2 
+  libsystemd0        conda-forge/linux-64::libsystemd0-258.3-h6569c3e_0 
+  libtorch           conda-forge/linux-64::libtorch-2.7.1-cpu_mkl_hf38bc2d_103 
+  libudev1           conda-forge/linux-64::libudev1-258.3-h6569c3e_0 
+  libunwind          conda-forge/linux-64::libunwind-1.6.2-h9c3ff4c_0 
+  liburing           conda-forge/linux-64::liburing-2.10-h84d6215_0 
+  libusb             conda-forge/linux-64::libusb-1.0.29-h73b1eb8_0 
+  libuv              conda-forge/linux-64::libuv-1.51.0-hb03c661_1 
+  libvorbis          conda-forge/linux-64::libvorbis-1.3.7-h54a6638_2 
+  libvpl             conda-forge/linux-64::libvpl-2.15.0-h54a6638_1 
+  libxkbcommon       conda-forge/linux-64::libxkbcommon-1.11.0-he8b52b9_0 
+  mpg123             conda-forge/linux-64::mpg123-1.32.9-hc50e24c_0 
+  ocl-icd            conda-forge/linux-64::ocl-icd-2.3.3-hb9d3cd8_0 
+  opencl-headers     conda-forge/linux-64::opencl-headers-2025.06.13-h5888daf_0 
+  openfst            conda-forge/linux-64::openfst-1.8.4-h84d6215_1 
+  optree             conda-forge/linux-64::optree-0.18.0-py311hdf67eae_0 
+  pango              conda-forge/linux-64::pango-1.56.4-hadf4263_0 
+  pixman             conda-forge/linux-64::pixman-0.46.4-h54a6638_1 
+  pugixml            conda-forge/linux-64::pugixml-1.15-h3f63f65_0 
+  pulseaudio-client  conda-forge/linux-64::pulseaudio-client-17.0-hac146a9_1 
+  pybind11           conda-forge/noarch::pybind11-3.0.1-pyh7a1b43c_0 
+  pybind11-global    conda-forge/noarch::pybind11-global-3.0.1-pyhc7ab6ef_0 
+  rav1e              conda-forge/linux-64::rav1e-0.7.1-h8fae777_3 
+  rdma-core          conda-forge/linux-64::rdma-core-60.0-hecca717_0 
+  sdl2               conda-forge/linux-64::sdl2-2.32.54-h3f2d84a_0 
+  sdl3               conda-forge/linux-64::sdl3-3.2.16-he3e324a_0 
+  shaderc            conda-forge/linux-64::shaderc-2025.3-h3e344bc_1 
+  sleef              conda-forge/linux-64::sleef-3.9.0-ha0421bc_0 
+  spirv-tools        conda-forge/linux-64::spirv-tools-2025.4-hb700be7_0 
+  sympy              conda-forge/noarch::sympy-1.14.0-pyh2585a3b_105 
+  tbb                conda-forge/linux-64::tbb-2021.13.0-h8d10470_4 
+  torchcodec         conda-forge/linux-64::torchcodec-0.8.1-cpu_py311_ha763acb_1 
+  torchvision-extra~ conda-forge/linux-64::torchvision-extra-decoders-0.0.2-py311ha44aed6_3 
+  xkeyboard-config   conda-forge/linux-64::xkeyboard-config-2.46-hb03c661_0 
+  xorg-libice        conda-forge/linux-64::xorg-libice-1.1.2-hb9d3cd8_0 
+  xorg-libsm         conda-forge/linux-64::xorg-libsm-1.2.6-he73a12e_0 
+  xorg-libxcursor    conda-forge/linux-64::xorg-libxcursor-1.2.3-hb9d3cd8_0 
+  xorg-libxrender    conda-forge/linux-64::xorg-libxrender-0.9.12-hb9d3cd8_0 
+  xorg-libxscrnsaver conda-forge/linux-64::xorg-libxscrnsaver-1.2.4-hb9d3cd8_0 
+
+The following packages will be UPDATED:
+
+  aom                                      3.6.1-h59595ed_0 --> 3.9.1-hac33072_0 
+  aws-c-auth                               0.8.6-hd08a7f5_4 --> 0.9.1-h48c9088_3 
+  aws-c-cal                                0.8.7-h043a21b_0 --> 0.9.2-he7b75e1_1 
+  aws-c-common                            0.12.0-hb9d3cd8_0 --> 0.12.4-hb03c661_0 
+  aws-c-compression                        0.3.1-h3870646_2 --> 0.3.1-h92c474e_6 
+  aws-c-event-stream                       0.5.4-h04a3f94_2 --> 0.5.6-h82d11aa_3 
+  aws-c-http                               0.9.4-hb9b18c6_4 --> 0.10.4-h94feff3_3 
+  aws-c-io                                0.17.0-h3dad3f2_6 --> 0.22.0-h57f3b0d_1 
+  aws-c-mqtt                              0.12.2-h108da3e_2 --> 0.13.3-h2b1cf8c_6 
+  aws-c-s3                                0.7.13-h822ba82_2 --> 0.8.6-h4e5ac4b_5 
+  aws-c-sdkutils                           0.2.3-h3870646_2 --> 0.2.4-h92c474e_1 
+  aws-checksums                            0.2.3-h3870646_2 --> 0.2.7-h92c474e_2 
+  aws-crt-cpp                             0.31.0-h55f77e1_4 --> 0.34.4-h60c762c_0 
+  aws-sdk-cpp                           1.11.510-h37a5c72_3 --> 1.11.606-h32384e2_4 
+  azure-core-cpp                          1.14.0-h5cfcd09_0 --> 1.16.0-h3a458e0_1 
+  azure-identity-cpp                      1.10.0-h113e628_0 --> 1.12.0-ha729027_0 
+  azure-storage-blo~                     12.13.0-h3cf044e_1 --> 12.14.0-hb1c9500_1 
+  azure-storage-com~                      12.8.0-h736e048_1 --> 12.10.0-hebae86a_2 
+  azure-storage-fil~                     12.12.0-ha633028_1 --> 12.12.0-h8b27e44_3 
+  c-ares                                  1.34.4-hb9d3cd8_0 --> 1.34.6-hb03c661_0 
+  cuda-version                  nvidia::cuda-version-12.6-3 --> conda-forge::cuda-version-12.9-h4f385c5_3 
+  ffmpeg                             4.4.2-gpl_hdf48244_113 --> 8.0.0-gpl_h1007c2e_505 
+  grpcio                             1.67.1-py311h9789449_1 --> 1.73.1-py311h46a3a17_1 
+  libabseil                     20240722.0-cxx17_hbbce691_4 --> 20250512.1-cxx17_hba17884_0 
+  libarrow                           19.0.1-h1938f28_3_cuda --> 21.0.0-h56a6dad_8_cpu 
+  libarrow-acero                     19.0.1-hb826db4_3_cuda --> 21.0.0-h635bf11_8_cpu 
+  libarrow-dataset                   19.0.1-hb826db4_3_cuda --> 21.0.0-h635bf11_8_cpu 
+  libarrow-substrait                 19.0.1-hbf482d9_3_cuda --> 21.0.0-h3f74fd7_8_cpu 
+  libblas                              3.9.0-16_linux64_mkl --> 3.9.0-26_linux64_mkl 
+  libcblas                             3.9.0-16_linux64_mkl --> 3.9.0-26_linux64_mkl 
+  libcufile                    nvidia::libcufile-1.11.1.6-0 --> conda-forge::libcufile-1.14.1.1-hbc026e6_1 
+  libcurand                   nvidia::libcurand-10.3.7.77-0 --> conda-forge::libcurand-10.3.10.19-h676940d_1 
+  libcurl                                 8.14.0-h332b0f4_0 --> 8.17.0-h4e3cde8_1 
+  libexpat                                 2.7.0-h5888daf_0 --> 2.7.3-hecca717_0 
+  libffi                                   3.4.2-h7f98852_5 --> 3.4.6-h2dba641_1 
+  libgcc                                  14.2.0-h77fa898_1 --> 15.2.0-he0feb66_16 
+  libgcc-ng                               14.2.0-h69a702a_1 --> 15.2.0-h69a702a_16 
+  libgomp                                 14.2.0-h77fa898_1 --> 15.2.0-he0feb66_16 
+  libgoogle-cloud                         2.36.0-h2b5623c_0 --> 2.39.0-hdb79228_0 
+  libgoogle-cloud-s~                      2.36.0-h0121fbd_0 --> 2.39.0-hdbdcf42_0 
+  libgrpc                                 1.67.1-h25350d4_1 --> 1.73.1-h3288cfb_1 
+  liblapack                            3.9.0-16_linux64_mkl --> 3.9.0-26_linux64_mkl 
+  libnghttp2                              1.64.0-h161d5f1_0 --> 1.67.0-had1ee68_0 
+  libopentelemetry-~                      1.18.0-hfcad708_1 --> 1.21.0-hb9b0907_1 
+  libopentelemetry-~                      1.18.0-ha770c72_1 --> 1.21.0-ha770c72_1 
+  libparquet                         19.0.1-h3f30f2e_3_cuda --> 21.0.0-h790f06f_8_cpu 
+  libprotobuf                             5.28.3-h6128344_1 --> 6.31.1-h49aed37_4 
+  libre2-11                           2024.07.02-hbbce691_2 --> 2025.11.05-h7b12aa8_0 
+  libstdcxx                               14.2.0-hc0a3c3a_1 --> 15.2.0-h934c35e_16 
+  libstdcxx-ng                            14.2.0-h4852527_1 --> 15.2.0-hdf11a46_16 
+  libthrift                               0.21.0-h0e7cc3e_0 --> 0.22.0-h454ac66_1 
+  libutf8proc                             2.10.0-h202a827_0 --> 2.11.2-hfe17d71_0 
+  libvpx                                  1.13.1-h59595ed_0 --> 1.14.1-hac33072_0 
+  llvm-openmp                             15.0.7-h0cdce71_0 --> 20.1.8-h4922eb0_0 
+  mkl                  pkgs/main::mkl-2022.1.0-hc2b9512_224 --> conda-forge::mkl-2024.2.2-ha770c72_17 
+  openh264                                 2.3.1-hcb278e6_2 --> 2.6.0-hc22cd8d_0 
+  orc                                      2.1.1-h2271f48_0 --> 2.2.1-hd747db4_0 
+  protobuf                           5.28.3-py311hfdbb021_0 --> 6.31.1-py311h425ed32_2 
+  pyarrow                            19.0.1-py311h38be061_0 --> 21.0.0-py311h38be061_1 
+  pyarrow-core                  19.0.1-py311hcae7c52_0_cuda --> 21.0.0-py311h342b5a4_1_cpu 
+  pytorch            pytorch::pytorch-2.5.1-py3.11_cuda11.~ --> conda-forge::pytorch-2.7.1-cpu_mkl_py311_h7bde0a3_103 
+  re2                                 2024.07.02-h9925aae_2 --> 2025.11.05-h5301d42_0 
+  s2n                                     1.5.14-h6c98b2b_0 --> 1.5.26-h5ac9029_0 
+  snappy                                   1.2.1-h8bd8927_1 --> 1.2.2-h03e3b7b_1 
+  svt-av1                                  1.4.1-hcb278e6_0 --> 3.1.2-hecca717_0 
+  torchaudio          pytorch::torchaudio-2.5.1-py311_cu118 --> conda-forge::torchaudio-2.8.0-cpu_py311hcb2ac7c_1 
+  torchvision        pytorch::torchvision-0.20.1-py311_cu1~ --> conda-forge::torchvision-0.24.0-cpu_py311_h9bcb066_0 
+  xorg-libx11                             1.8.10-h4f16b4b_1 --> 1.8.12-h4f16b4b_0 
+
+The following packages will be DOWNGRADED:
+
+  _openmp_mutex                                   4.5-2_gnu --> 4.5-7_kmp_llvm 
+
+
+Proceed ([y]/n)? 

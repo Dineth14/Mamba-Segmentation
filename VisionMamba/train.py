@@ -24,7 +24,7 @@ from tqdm import tqdm
 
 # Local imports
 from config import Config
-from model import NSSTMamba
+from model import VisionMambaSegmentation, build_model
 from dataset import build_dataloaders
 from losses import TriBraidLoss
 from utils import (
@@ -238,19 +238,14 @@ def train(config: Config, resume_path: str = None):
     
     # Create model
     logger.info("Creating model...")
-    logger.info("RGB encoder: Vision Mamba (Vim) - 1 Block")
+    logger.info("RGB encoder: Vision Mamba (Vim)")
     logger.info(f"Vim variant: {config.VIM_VARIANT}")
     logger.info(f"Vim weights: {config.WEIGHTS_PATH}")
     logger.info(f"Vim depths: {config.VIM_DEPTHS}")
     logger.info(f"Vim dims: {config.VIM_DIMS}")
     
-    model = NSSTMamba(
-        num_classes=config.NUM_CLASSES,
-        encoder_dims=config.VIM_DIMS,
-        encoder_depths=config.VIM_DEPTHS,
-        drop_path_rate=config.VIM_DROP_PATH,
-        weights_path=config.WEIGHTS_PATH,
-    )
+    # Build model using config
+    model = build_model(config)
     model = model.to(device)
     
     # Log model parameters
