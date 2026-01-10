@@ -41,8 +41,27 @@ datasets/
 *.ckpt
 
 # Experiment artifacts (do not track results)
-Comparison_Experiments*/
-Comparison_Experiments_ICPRS*/
+# Track experiment directories but exclude their outputs
+Comparison_Experiments/**/checkpoints/
+Comparison_Experiments/**/logs/
+Comparison_Experiments/**/tensorboard/
+Comparison_Experiments/**/val_preds/
+Comparison_Experiments/**/results/
+Comparison_Experiments/**/runs/
+Comparison_Experiments/**/wandb/
+Comparison_Experiments/**/best_model/
+Comparison_Experiments/**/*.log
+
+Comparison_Experiments_ICPRS_potsdam/**/checkpoints/
+Comparison_Experiments_ICPRS_potsdam/**/logs/
+Comparison_Experiments_ICPRS_potsdam/**/tensorboard/
+Comparison_Experiments_ICPRS_potsdam/**/val_preds/
+Comparison_Experiments_ICPRS_potsdam/**/results/
+Comparison_Experiments_ICPRS_potsdam/**/runs/
+Comparison_Experiments_ICPRS_potsdam/**/wandb/
+Comparison_Experiments_ICPRS_potsdam/**/best_model/
+Comparison_Experiments_ICPRS_potsdam/**/*.log
+
 **/outputs/
 **/checkpoints/
 **/tensorboard/
@@ -52,6 +71,10 @@ Comparison_Experiments_ICPRS*/
 **/wandb/
 **/best_model/
 **/training_log.txt
+
+# Include README files in experiment directories
+!Comparison_Experiments/**/README.md
+!Comparison_Experiments_ICPRS_potsdam/**/README.md
 
 # OS/editor
 .DS_Store
