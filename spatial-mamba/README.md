@@ -1,26 +1,36 @@
-# UrbanMamba
+# Spatial-Mamba Wrapper
 
-Production-grade RGB-only semantic segmentation system for the LOVEDA dataset.
+This directory contains the Spatial-Mamba (UrbanMamba RGB-only) semantic segmentation implementation for remote sensing datasets.
 
-## Architecture Overview
+## Structure
+
+- **Spatial-Mamba/** - Submodule containing the official Spatial-Mamba implementation
+    - Source: https://github.com/EdwardChasel/Spatial-Mamba
+    - RGB-only variant of UrbanMamba
+    - Used as the backbone encoder
+- **train.py** - Main training script
+- **config.py** - Configuration for LoveDA dataset
+- **config_icprs.py** - Configuration for ISPRS Potsdam dataset
+- **dataset.py** - LoveDA dataset loader
+- **dataset_isprs.py** - ISPRS Potsdam dataset loader (reused from MambaVision)
+- **model.py** - Integration of Spatial-Mamba backbone with LightUNetDecoder
+- **encoders.py** - Encoder wrapper for Spatial-Mamba
+- **light_decoder.py** - Lightweight U-Net decoder
+- **losses.py** - Loss functions (TriBraidLoss: Lovász + Focal + Boundary)
+- **parts.py** - Model building blocks
+- **utils.py** - Training utilities
+
+## Architecture
 
 ```
-RGB Image (3ch) ──► RGBEncoder (Spatial-Mamba: tiny/small/base) ──► LightUNetDecoder ──► Predictions
+RGB Image (3ch) -> Spatial-Mamba Encoder -> LightUNetDecoder -> Predictions
 ```
 
-## Files
-
-| File | Purpose |
-|------|---------|
-| `config.py` | Central configuration with all hyperparameters |
-| `parts.py` | Building blocks: Conv/attention utilities |
-| `encoders.py` | RGBEncoder (Spatial-Mamba) |
-| `light_decoder.py` | Lightweight U-Net decoder with deep supervision outputs |
-| `model.py` | NSSTMamba RGB-only assembly |
-| `dataset.py` | LovedaDataset with albumentations for RGB + masks |
-| `utils.py` | SegmentationEvaluator, PolynomialDecay, checkpoint utilities |
-| `losses.py` | TriBraidLoss (Lovász + Focal + Boundary) with deep supervision |
-| `train.py` | Iteration-based training loop with AMP |
+Spatial-Mamba (UrbanMamba RGB variant) features:
+- **Spatial-aware State Space Modeling** for urban scenes
+- **Multi-directional scanning** for comprehensive spatial context
+- **Optimized for RGB imagery** (no additional modalities needed)
+- **Hierarchical feature extraction** for multi-scale understanding
 
 ## Key Features
 

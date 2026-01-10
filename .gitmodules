@@ -1,0 +1,12 @@
+[submodule "MambaVision/MambaVision"]
+	path = MambaVision/MambaVision
+	url = https://github.com/NVlabs/MambaVision
+[submodule "VMamba/VMamba"]
+	path = VMamba/VMamba
+	url = https://github.com/MzeroMiko/VMamba
+[submodule "VisionMamba/Vim"]
+	path = VisionMamba/Vim
+	url = https://github.com/hustvl/Vim
+[submodule "spatial-mamba/Spatial-Mamba"]
+	path = spatial-mamba/Spatial-Mamba
+	url = https://github.com/EdwardChasel/Spatial-Mamba
