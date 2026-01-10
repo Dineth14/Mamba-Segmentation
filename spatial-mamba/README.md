@@ -89,6 +89,10 @@ Spatial-Mamba pretrained weights should be placed under the weights directory an
 /storage2/ChangeDetection/NSST-mamba/spatial-mamba/Spatial-Mamba/weights/
 ```
 
+## Results
+
+Outputs are written to the configured `OUTPUT_DIR` (checkpoints, logs, tensorboard, val_preds). These folders are gitignored by the root `.gitignore`.
+
 ## License
 
 MIT License

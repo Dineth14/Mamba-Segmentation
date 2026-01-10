@@ -1,57 +1,53 @@
 """
-Vision Mamba Configuration
-==========================
-Production-grade configuration for Vision Mamba semantic segmentation.
-Supports all Vision Mamba variants (tiny, small, base) with proper weight loading.
+VisionMamba ICPRS Configuration
+===============================
+Production-grade configuration for Vision Mamba semantic segmentation on ICPRS.
 """
 
 from dataclasses import dataclass, field
-from typing import List, Tuple, Dict, Optional
+from typing import List, Tuple, Dict
 import os
 
 
 @dataclass
 class Config:
-    """Master configuration for Vision Mamba training with multi-variant support."""
-    
+    """Master configuration for Vision Mamba training on ICPRS."""
+
     # ============== Paths ==============
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
-    DATASET: str = "loveda"
+    # Change to Potsdam if needed: /storage2/ChangeDetection/Datasets/ICPRS/Potsdam
+    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/ICPRS/Vaihingen"
+    DATASET: str = "icprs"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/VisionMamba_base_512/"
+    OUTPUT_DIR: str = (
+        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/"
+        "Comparison_Experiments_ICPRS/visionmamba_vaihingen_512"
+    )
     RESUME_PATH: str = ""
-    
+
     # Vision Mamba Weights Directory
     VIM_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VisionMamba/weights"
-    
+
     # ============== Model ==============
-    NUM_CLASSES: int = 7
+    NUM_CLASSES: int = 6
     IGNORE_INDEX: int = 255
-    
+
     # Vision Mamba Variant: "tiny" | "small" | "base"
-    # Available weights:
-    #  tiny: vim_t_midclstok_ft_78p3acc.pth (78.3% acc, fine-tuned)
-    #  small: vim_s_midclstok_ft_81p6acc.pth (81.6% acc, fine-tuned)
-    #  base: vim_b_midclstok_81p9acc.pth (81.9% acc)
     VIM_VARIANT: str = "base"
-    
+
     # Use fine-tuned weights if available (for tiny and small)
     USE_FINETUNED_WEIGHTS: bool = True
-    
+
     # Model depth configuration
-    # For Vision Mamba, this typically refers to the number of Mamba blocks
-    # Set to (1,) for single-block encoder, (24,) for full depth
-    VIM_DEPTHS: Tuple[int, ...] = (1,)  
-    
+    VIM_DEPTHS: Tuple[int, ...] = (1,)
+
     # Embedding dimensions per variant
     VIM_DIMS_MAP: Dict[str, Tuple[int, ...]] = field(default_factory=lambda: {
         "tiny": (192,),
         "small": (384,),
         "base": (768,),
     })
-    # Will be resolved in post_init
     VIM_DIMS: Tuple[int, ...] = (192,)
-    
+
     # Weight mapping: variant -> (base_weights, finetuned_weights)
     VIM_WEIGHTS_MAP: Dict[str, Dict[str, str]] = field(default_factory=lambda: {
         "tiny": {
@@ -62,150 +58,140 @@ class Config:
         },
         "base": {
             "base": "vim_b_midclstok_81p9acc.pth",
-            "finetuned": "vim_b_midclstok_81p9acc.pth",  # No fine-tuned version available
+            "finetuned": "vim_b_midclstok_81p9acc.pth",
         },
-    }) 
-    
+    })
+
     # Drop path rate for regularization
-    VIM_DROP_PATH: float = 0.0  # No drop path for single block usually
-    
+    VIM_DROP_PATH: float = 0.0
+
     # Decoder configuration
     DECODER_CHANNELS: int = 256
-    
+
     # Vision Mamba specific settings
-    USE_RMS_NORM: bool = True  # Vim uses RMSNorm
-    VIM_FUSED_ADD_NORM: bool = True  # Use fused add+norm for efficiency
-    VIM_RESIDUAL_IN_FP32: bool = True  # Keep residuals in FP32
-    VIM_IF_ROPE: bool = False  # Vision Mamba uses absolute positional embeddings
-    VIM_BIMAMBA_TYPE: str = "v2"  # BiMamba v2 architecture
-    
+    USE_RMS_NORM: bool = True
+    VIM_FUSED_ADD_NORM: bool = True
+    VIM_RESIDUAL_IN_FP32: bool = True
+    VIM_IF_ROPE: bool = False
+    VIM_BIMAMBA_TYPE: str = "v2"
+
     # ============== Train/Val Paths ==============
-    TRAIN_IMG_DIR: List[str] = field(default_factory=lambda: [
-        "Train/Train/Urban/images_png",
-        "Train/Train/Rural/images_png"
-    ])
-    TRAIN_MASK_DIR: List[str] = field(default_factory=lambda: [
-        "Train/Train/Urban/masks_png",
-        "Train/Train/Rural/masks_png"
-    ])
-    
-    VAL_IMG_DIR: List[str] = field(default_factory=lambda: [
-        "Val/Val/Urban/images_png",
-        "Val/Val/Rural/images_png"
-    ])
-    VAL_MASK_DIR: List[str] = field(default_factory=lambda: [
-        "Val/Val/Urban/masks_png",
-        "Val/Val/Rural/masks_png"
-    ])
-    
+    TRAIN_IMG_DIR: List[str] = field(default_factory=lambda: ["Images"])
+    TRAIN_MASK_DIR: List[str] = field(default_factory=lambda: ["Labels"])
+    VAL_IMG_DIR: List[str] = field(default_factory=lambda: ["Images"])
+    VAL_MASK_DIR: List[str] = field(default_factory=lambda: ["Labels"])
+
     # ============== Training ==============
-    BATCH_SIZE: int = 4 
+    BATCH_SIZE: int = 4
     CROP_SIZE: int = 512
-    MAX_ITERS: int = 50000 
-    VAL_INTERVAL: int = 2500 
-    NUM_WORKERS: int = 8 
-    PREFETCH_FACTOR: int = 4 
+    MAX_ITERS: int = 50000
+    VAL_INTERVAL: int = 2500
+    NUM_WORKERS: int = 8
+    PREFETCH_FACTOR: int = 4
     PIN_MEMORY: bool = True
     PERSISTENT_WORKERS: bool = True
-    
+
     # ============== Optimization ==============
-    LR_BACKBONE: float = 6e-5 
-    LR_HEAD: float = 3e-4 
+    LR_BACKBONE: float = 6e-5
+    LR_HEAD: float = 3e-4
     WEIGHT_DECAY: float = 0.05
     POLY_POWER: float = 0.9
-    
+
     # Mixed Precision
     USE_AMP: bool = True
     ALLOW_TF32: bool = True
     CUDNN_BENCHMARK: bool = True
     MATMUL_PRECISION: str = "high"
-    
+
     # Gradient clipping
     GRAD_CLIP: float = 1.0
-    
+
     # Focal Loss
     FOCAL_GAMMA: float = 2.0
-    
+
     # ============== Data Augmentation ==============
     HORIZONTAL_FLIP_PROB: float = 0.5
     VERTICAL_FLIP_PROB: float = 0.5
     ROTATE_90_PROB: float = 0.5
     COLOR_JITTER: bool = True
-    
+
     # ============== Normalization ==============
-    # ImageNet stats for RGB
     RGB_MEAN: Tuple[float, ...] = (0.485, 0.456, 0.406)
     RGB_STD: Tuple[float, ...] = (0.229, 0.224, 0.225)
-    
+
     # ============== Class Names ==============
     CLASS_NAMES: Tuple[str, ...] = (
-        "Background", "Building", "Road", "Water", "Barren", "Forest", "Agricultural"
+        "Impervious",
+        "Building",
+        "LowVeg",
+        "Tree",
+        "Car",
+        "Clutter",
     )
     ICPRS_CLASS_NAMES: Tuple[str, ...] = (
-        "Impervious", "Building", "LowVeg", "Tree", "Car", "Clutter"
+        "Impervious",
+        "Building",
+        "LowVeg",
+        "Tree",
+        "Car",
+        "Clutter",
     )
 
     # ICPRS split settings (used when DATASET == "icprs")
     ICPRS_VAL_SPLIT: float = 0.2
     ICPRS_SEED: int = 42
-    
+
     GPU_ID: int = 1
-    
+
     # ============== Logging ==============
     LOG_INTERVAL: int = 250
-    
+
     def __post_init__(self):
         """Resolve paths, dimensions, and weights."""
         variant = (self.VIM_VARIANT or "base").lower()
-        
-        # Validate variant
         valid_variants = list(self.VIM_DIMS_MAP.keys())
         if variant not in valid_variants:
             raise ValueError(f"Invalid variant '{variant}'. Must be one of {valid_variants}")
-        
-        # Resolve embedding dimensions
         self.VIM_DIMS = self.VIM_DIMS_MAP[variant]
-        
-        # Resolve weights path
+
         if not self.WEIGHTS_PATH or self.WEIGHTS_PATH.lower() == "auto":
             weight_type = "finetuned" if self.USE_FINETUNED_WEIGHTS else "base"
             weight_name = self.VIM_WEIGHTS_MAP.get(variant, {}).get(weight_type)
-            
             if weight_name:
                 self.WEIGHTS_PATH = os.path.join(self.VIM_WEIGHTS_DIR, weight_name)
                 if not os.path.exists(self.WEIGHTS_PATH):
-                    # Fallback to base weights if finetuned doesn't exist
                     if weight_type == "finetuned":
-                        weight_name = self.VIM_WEIGHTS_MAP[variant]["base"]
-                        self.WEIGHTS_PATH = os.path.join(self.VIM_WEIGHTS_DIR, weight_name)
+                        weight_name = self.VIM_WEIGHTS_MAP[variant].get("base", "")
+                        self.WEIGHTS_PATH = (
+                            os.path.join(self.VIM_WEIGHTS_DIR, weight_name) if weight_name else ""
+                        )
             else:
                 self.WEIGHTS_PATH = ""
-        
-        # Create output directories
+
         os.makedirs(self.OUTPUT_DIR, exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "checkpoints"), exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "logs"), exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "tensorboard"), exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "val_preds"), exist_ok=True)
-    
+
     def get_full_path(self, relative_path: str) -> str:
         """Get full path for a data directory."""
         return os.path.join(self.DATA_ROOT, relative_path)
-    
+
     def get_train_paths(self):
         """Get training image and mask directories."""
         return (
             [self.get_full_path(p) for p in self.TRAIN_IMG_DIR],
-            [self.get_full_path(p) for p in self.TRAIN_MASK_DIR]
+            [self.get_full_path(p) for p in self.TRAIN_MASK_DIR],
         )
-    
+
     def get_val_paths(self):
         """Get validation image and mask directories."""
         return (
             [self.get_full_path(p) for p in self.VAL_IMG_DIR],
-            [self.get_full_path(p) for p in self.VAL_MASK_DIR]
+            [self.get_full_path(p) for p in self.VAL_MASK_DIR],
         )
-    
+
     def get_model_config(self) -> Dict:
         """Get model configuration as a dictionary."""
         return {
@@ -228,26 +214,17 @@ cfg = Config()
 
 
 if __name__ == "__main__":
-    print("=" * 70)
-    print("Vision Mamba Segmentation Configuration")
-    print("=" * 70)
-    print(f"Variant:              {cfg.VIM_VARIANT}")
-    print(f"Available Variants:   tiny (192), small (384), base (768)")
-    print(f"Depths:               {cfg.VIM_DEPTHS}")
-    print(f"Dims:                 {cfg.VIM_DIMS}")
-    print(f"Drop Path Rate:       {cfg.VIM_DROP_PATH}")
-    print(f"Use Finetuned:        {cfg.USE_FINETUNED_WEIGHTS}")
-    print(f"Weights Path:         {cfg.WEIGHTS_PATH}")
-    print(f"Weights Exist:        {os.path.exists(cfg.WEIGHTS_PATH) if cfg.WEIGHTS_PATH else False}")
-    print(f"Output Dir:           {cfg.OUTPUT_DIR}")
-    print(f"Data Root:            {cfg.DATA_ROOT}")
-    print(f"Classes:              {cfg.NUM_CLASSES}")
-    print("=" * 70)
-    print("\nAvailable Weights in {0}:".format(cfg.VIM_WEIGHTS_DIR))
-    if os.path.exists(cfg.VIM_WEIGHTS_DIR):
-        for w in sorted(os.listdir(cfg.VIM_WEIGHTS_DIR)):
-            if w.endswith('.pth'):
-                weight_path = os.path.join(cfg.VIM_WEIGHTS_DIR, w)
-                size_mb = os.path.getsize(weight_path) / (1024**2)
-                print(f"  - {w} ({size_mb:.1f} MB)")
-    print("=" * 70)
+    print("=" * 60)
+    print("VisionMamba ICPRS Configuration")
+    print("=" * 60)
+    print(f"Data Root: {cfg.DATA_ROOT}")
+    print(f"Output Dir: {cfg.OUTPUT_DIR}")
+    print(f"Resume Path: {cfg.RESUME_PATH}")
+    print(f"Batch Size: {cfg.BATCH_SIZE}")
+    print(f"Crop Size: {cfg.CROP_SIZE}")
+    print(f"Max Iterations: {cfg.MAX_ITERS}")
+    print(f"Num Classes: {cfg.NUM_CLASSES}")
+    print(f"Vision Mamba Variant: {cfg.VIM_VARIANT}")
+    print(f"Weights Path: {cfg.WEIGHTS_PATH}")
+    print(f"Decoder Channels: {cfg.DECODER_CHANNELS}")
+    print("=" * 60)

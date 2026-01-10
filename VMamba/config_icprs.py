@@ -1,7 +1,7 @@
 """
-UrbanMamba Configuration
-========================
-Production-grade configuration for semantic segmentation on LOVEDA dataset.
+VMamba ICPRS Configuration
+==========================
+Production-grade configuration for semantic segmentation on ICPRS (ISPRS).
 RGB-only VMamba encoder with lightweight U-Net decoder.
 """
 
@@ -12,13 +12,17 @@ import os
 
 @dataclass
 class Config:
-    """Master configuration for UrbanMamba training."""
-    
+    """Master configuration for VMamba training on ICPRS."""
+
     # ============== Paths ==============
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
-    DATASET: str = "loveda"
+    # Change to Vaihingen if needed: /storage2/ChangeDetection/Datasets/ICPRS/Vaihingen
+    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/ICPRS/Potsdam"
+    DATASET: str = "icprs"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_base_512/"
+    OUTPUT_DIR: str = (
+        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/"
+        "Comparison_Experiments_ICPRS_potsdam/vmamba_gpu"
+    )
     RESUME_PATH: str = ""
     VMAMBA_WEIGHT_SET: str = "imagenet1k"  # "imagenet1k" | "ade20k" | "vanilla_ade20k"
     VMAMBA_WEIGHTS_DIR: str = ""
@@ -59,40 +63,27 @@ class Config:
         "small": 0.3,
         "base": 0.6,
     })
-    
+
     # Train/Val paths (relative to DATA_ROOT)
-    TRAIN_IMG_DIR: List[str] = field(default_factory=lambda: [
-        "Train/Train/Urban/images_png",
-        "Train/Train/Rural/images_png"
-    ])
-    TRAIN_MASK_DIR: List[str] = field(default_factory=lambda: [
-        "Train/Train/Urban/masks_png",
-        "Train/Train/Rural/masks_png"
-    ])
-    
-    VAL_IMG_DIR: List[str] = field(default_factory=lambda: [
-        "Val/Val/Urban/images_png",
-        "Val/Val/Rural/images_png"
-    ])
-    VAL_MASK_DIR: List[str] = field(default_factory=lambda: [
-        "Val/Val/Urban/masks_png",
-        "Val/Val/Rural/masks_png"
-    ])
-    
+    TRAIN_IMG_DIR: List[str] = field(default_factory=lambda: ["Images"])
+    TRAIN_MASK_DIR: List[str] = field(default_factory=lambda: ["Labels"])
+    VAL_IMG_DIR: List[str] = field(default_factory=lambda: ["Images"])
+    VAL_MASK_DIR: List[str] = field(default_factory=lambda: ["Labels"])
+
     # ============== Training ==============
-    BATCH_SIZE: int = 4 
-    CROP_SIZE: int = 512  # Random crop size during training
-    MAX_ITERS: int = 50000  # Total training iterations
-    VAL_INTERVAL: int = 2500  # Validate every N iterations
+    BATCH_SIZE: int = 8
+    CROP_SIZE: int = 32 # Random crop size during training
+    MAX_ITERS: int = 500  # Total training iterations
+    VAL_INTERVAL: int = 250  # Validate every N iterations
     NUM_WORKERS: int = 8  # DataLoader workers
     PREFETCH_FACTOR: int = 4  # Batches prefetched per worker
     PIN_MEMORY: bool = True
     PERSISTENT_WORKERS: bool = True
-    
+
     # ============== Model ==============
-    NUM_CLASSES: int = 7  # LOVEDA: Background, Building, Road, Water, Barren, Forest, Agricultural
+    NUM_CLASSES: int = 6
     IGNORE_INDEX: int = 255  # Label to ignore in loss computation
-    
+
     # VMamba variant selection: "tiny" | "small" | "base"
     VMAMBA_VARIANT: str = "base"
     # Auto-populated from maps based on VMAMBA_VARIANT
@@ -114,49 +105,47 @@ class Config:
     VMAMBA_NORM_LAYER: str = "ln"
     VMAMBA_DOWNSAMPLE_VERSION: str = "v1"
     VMAMBA_PATCHEMBED_VERSION: str = "v1"
-    
+
     # Decoder
     DECODER_CHANNELS: int = 256
-    
+
     # ============== Optimization ==============
     LR_BACKBONE: float = 6e-5  # VMamba backbone learning rate
     LR_HEAD: float = 3e-4  # Decoder and other components learning rate
     WEIGHT_DECAY: float = 0.05
     POLY_POWER: float = 0.9  # Polynomial LR decay power
-    
+
     # Mixed Precision
     USE_AMP: bool = True
     ALLOW_TF32: bool = True
     CUDNN_BENCHMARK: bool = True
     MATMUL_PRECISION: str = "high"
-    
+
     # Gradient clipping
     GRAD_CLIP: float = 1.0
-    
+
     # Focal Loss
     FOCAL_GAMMA: float = 2.0
-    
+
     # ============== Data Augmentation ==============
     HORIZONTAL_FLIP_PROB: float = 0.5
     VERTICAL_FLIP_PROB: float = 0.5
     ROTATE_90_PROB: float = 0.5
     COLOR_JITTER: bool = True
-    
+
     # ============== Normalization ==============
     # ImageNet stats for RGB
     RGB_MEAN: Tuple[float, ...] = (0.485, 0.456, 0.406)
     RGB_STD: Tuple[float, ...] = (0.229, 0.224, 0.225)
-    
-    
+
     # ============== Class Names ==============
     CLASS_NAMES: Tuple[str, ...] = (
-        "Background",
-        "Building", 
-        "Road",
-        "Water",
-        "Barren",
-        "Forest",
-        "Agricultural"
+        "Impervious",
+        "Building",
+        "LowVeg",
+        "Tree",
+        "Car",
+        "Clutter",
     )
     ICPRS_CLASS_NAMES: Tuple[str, ...] = (
         "Impervious",
@@ -164,18 +153,18 @@ class Config:
         "LowVeg",
         "Tree",
         "Car",
-        "Clutter"
+        "Clutter",
     )
 
     # ICPRS split settings (used when DATASET == "icprs")
     ICPRS_VAL_SPLIT: float = 0.2
     ICPRS_SEED: int = 42
-    
-    GPU_ID: int = 0 # CUDA device index
-    
+
+    GPU_ID: int = 1 # CUDA device index
+
     # ============== Logging ==============
     LOG_INTERVAL: int = 250
-    
+
     def __post_init__(self):
         """Create output directories and resolve VMamba variant."""
         variant = (self.VMAMBA_VARIANT or "base").lower()
@@ -194,7 +183,9 @@ class Config:
         if not self.WEIGHTS_PATH or self.WEIGHTS_PATH.lower() == "auto":
             weight_map = self.VMAMBA_WEIGHTS_FILE_MAP.get(weight_set, {})
             weight_name = weight_map.get(variant, "")
-            self.WEIGHTS_PATH = os.path.join(self.VMAMBA_WEIGHTS_DIR, weight_name) if weight_name else ""
+            self.WEIGHTS_PATH = (
+                os.path.join(self.VMAMBA_WEIGHTS_DIR, weight_name) if weight_name else ""
+            )
         backbone_cfg = {
             "ssm_d_state": 16,
             "ssm_ratio": 2.0,
@@ -218,12 +209,11 @@ class Config:
                 "ssm_conv_bias": False,
                 "forward_type": "v05_noz",
                 "mlp_ratio": 4.0,
+                "gmlp": False,
                 "norm_layer": "ln2d",
                 "downsample_version": "v3",
                 "patchembed_version": "v2",
             })
-            if variant == "tiny":
-                backbone_cfg["ssm_ratio"] = 1.0
         elif weight_set == "vanilla_ade20k":
             backbone_cfg.update({
                 "ssm_d_state": 16,
@@ -231,6 +221,7 @@ class Config:
                 "ssm_conv_bias": True,
                 "forward_type": "v0",
                 "mlp_ratio": 0.0,
+                "gmlp": False,
                 "norm_layer": "ln",
                 "downsample_version": "v1",
                 "patchembed_version": "v1",
@@ -254,23 +245,23 @@ class Config:
         os.makedirs(os.path.join(self.OUTPUT_DIR, "logs"), exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "tensorboard"), exist_ok=True)
         os.makedirs(os.path.join(self.OUTPUT_DIR, "val_preds"), exist_ok=True)
-    
+
     def get_full_path(self, relative_path: str) -> str:
         """Get full path from relative path."""
         return os.path.join(self.DATA_ROOT, relative_path)
-    
+
     def get_train_paths(self):
         """Get full training paths."""
         return (
             [self.get_full_path(p) for p in self.TRAIN_IMG_DIR],
-            [self.get_full_path(p) for p in self.TRAIN_MASK_DIR]
+            [self.get_full_path(p) for p in self.TRAIN_MASK_DIR],
         )
-    
+
     def get_val_paths(self):
         """Get full validation paths."""
         return (
             [self.get_full_path(p) for p in self.VAL_IMG_DIR],
-            [self.get_full_path(p) for p in self.VAL_MASK_DIR]
+            [self.get_full_path(p) for p in self.VAL_MASK_DIR],
         )
 
 
@@ -279,9 +270,8 @@ cfg = Config()
 
 
 if __name__ == "__main__":
-    # Print configuration summary
     print("=" * 60)
-    print("UrbanMamba Configuration")
+    print("UrbanMamba (VMamba) ICPRS Configuration")
     print("=" * 60)
     print(f"Data Root: {cfg.DATA_ROOT}")
     print(f"Output Dir: {cfg.OUTPUT_DIR}")

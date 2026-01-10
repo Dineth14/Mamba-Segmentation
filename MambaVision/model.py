@@ -219,7 +219,7 @@ if __name__ == "__main__":
     # Create model
     print("\nBuilding Mambavision model...")
     model = Mambavision(
-        num_classes=7,
+        num_classes=6,
         encoder_dims=(96, 192, 384, 768),
         decoder_channels=256,
         pretrained_rgb=False  # Skip pretrained for test

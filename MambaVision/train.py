@@ -23,9 +23,10 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 # Local imports
-from config import Config
+from config_icprs import Config
 from model import build_model
 from dataset import build_dataloaders
+from dataset_isprs import build_potsdam_loaders
 from losses import TriBraidLoss
 from utils import (
     SegmentationEvaluator,
@@ -108,6 +109,28 @@ def setup_logging(output_dir: str) -> logging.Logger:
 
 def create_dataloaders(config: Config) -> tuple:
     """Create training and validation dataloaders using build_dataloaders."""
+    dataset_name = getattr(config, "DATASET", "loveda").lower()
+    if dataset_name == "icprs":
+        train_loader, val_loader, _ = build_potsdam_loaders(
+            root=config.DATA_ROOT,
+            patch_size=config.CROP_SIZE,
+            train_stride=getattr(config, "ICPRS_TRAIN_STRIDE", config.CROP_SIZE),
+            val_stride=getattr(config, "ICPRS_VAL_STRIDE", config.CROP_SIZE),
+            val_split=getattr(config, "ICPRS_VAL_SPLIT", 0.2),
+            test_split=getattr(config, "ICPRS_TEST_SPLIT", 0.0),
+            batch_size=config.BATCH_SIZE,
+            num_workers=config.NUM_WORKERS,
+            pin_memory=config.PIN_MEMORY,
+            persistent_workers=config.PERSISTENT_WORKERS,
+            normalize_mean=tuple(config.RGB_MEAN),
+            normalize_std=tuple(config.RGB_STD),
+            ignore_index=config.IGNORE_INDEX,
+            train_mode=getattr(config, "ICPRS_TRAIN_MODE", "random_crop"),
+            augment=True,
+            cache_tiles=getattr(config, "ICPRS_CACHE_TILES", False),
+            seed=getattr(config, "ICPRS_SEED", 0),
+        )
+        return train_loader, val_loader
     return build_dataloaders(config)
 
 
@@ -126,7 +149,8 @@ def validate(
     evaluator: SegmentationEvaluator,
     device: torch.device,
     logger: logging.Logger,
-    use_amp: bool
+    use_amp: bool,
+    class_names: list = None
 ) -> dict:
     """
     Run validation and compute metrics.
@@ -194,7 +218,7 @@ def validate(
     metrics['val_loss'] = loss_meter.avg
     
     # Log formatted table
-    logger.info("\n" + format_metrics_table(metrics))
+    logger.info("\n" + format_metrics_table(metrics, class_names=class_names))
     
     model.train()
     return metrics
@@ -263,14 +287,14 @@ def train(config: Config, resume_path: str = None):
     scheduler = PolynomialDecay(
         optimizer,
         max_iters=config.MAX_ITERS,
-        power=0.9,
+        power=config.POLY_POWER,
         min_lr=1e-6
     )
     
     # Create loss function
     criterion = TriBraidLoss(
-        ignore_index=255,
-        focal_gamma=2.0,
+        ignore_index=config.IGNORE_INDEX,
+        focal_gamma=config.FOCAL_GAMMA,
         boundary_weight=config.BOUNDARY_WEIGHT
     )
     
@@ -350,7 +374,7 @@ def train(config: Config, resume_path: str = None):
         
         # Gradient clipping
         scaler.unscale_(optimizer)
-        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=1.0)
+        torch.nn.utils.clip_grad_norm_(model.parameters(), max_norm=config.GRAD_CLIP)
         
         # Optimizer step
         scaler.step(optimizer)
@@ -392,7 +416,8 @@ def train(config: Config, resume_path: str = None):
             metrics = validate(
                 model, val_loader, criterion,
                 evaluator, device, logger,
-                use_amp=config.USE_AMP
+                use_amp=config.USE_AMP,
+                class_names=list(config.CLASS_NAMES)
             )
             
             # TensorBoard logging

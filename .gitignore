@@ -28,6 +28,7 @@ outputs/
 checkpoints/
 tensorboard/
 val_preds/
+events.out.tfevents*
 
 # Data and caches
 data/
@@ -38,6 +39,19 @@ datasets/
 *.pth
 *.pth.tar
 *.ckpt
+
+# Experiment artifacts (do not track results)
+Comparison_Experiments*/
+Comparison_Experiments_ICPRS*/
+**/outputs/
+**/checkpoints/
+**/tensorboard/
+**/val_preds/
+**/results/
+**/runs/
+**/wandb/
+**/best_model/
+**/training_log.txt
 
 # OS/editor
 .DS_Store
