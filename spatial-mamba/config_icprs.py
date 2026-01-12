@@ -21,7 +21,7 @@ class Config:
     WEIGHTS_PATH: str = "auto"
     OUTPUT_DIR: str = (
         "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/"
-        "Comparison_Experiments_ICPRS_potsdam/spatialmamba_gpu"
+        "Comparison_Experiments_ICPRS_potsdam/spatialmamba_base_512"
     )
     RESUME_PATH: str = ""
     SPATIALMAMBA_WEIGHTS_DIR: str = (
@@ -60,9 +60,9 @@ class Config:
     # ============== Training ==============
     BATCH_SIZE: int = 8
     CROP_SIZE: int = 512 # Random crop size during training
-    MAX_ITERS: int = 250  # Total training iterations
-    VAL_INTERVAL: int = 250  # Validate every N iterations
-    NUM_WORKERS: int = 8  # DataLoader workers
+    MAX_ITERS: int = 25000  # Total training iterations
+    VAL_INTERVAL: int = 2500  # Validate every N iterations
+    NUM_WORKERS: int = 16  # DataLoader workers
     PREFETCH_FACTOR: int = 4  # Batches prefetched per worker
     PIN_MEMORY: bool = True
     PERSISTENT_WORKERS: bool = True

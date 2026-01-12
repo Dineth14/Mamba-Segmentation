@@ -7,6 +7,7 @@ Supports all Vision Mamba variants (tiny, small, base) with proper weight loadin
 
 from __future__ import annotations
 
+import inspect
 import os
 import sys
 from collections import OrderedDict
@@ -90,23 +91,38 @@ class RGBEncoder(nn.Module):
         print(f"  embed_dim: {self.embed_dim}, depth: {self.depth}, patch_size: {patch_size}")
 
         # Create Vision Mamba backbone
-        self.backbone = VisionMamba(
-            img_size=224,
-            patch_size=patch_size,
-            embed_dim=self.embed_dim,
-            depth=self.depth,
-            rms_norm=use_rms_norm,
-            residual_in_fp32=residual_in_fp32,
-            fused_add_norm=fused_add_norm,
-            final_pool_type='none',  # Keep spatial structure
-            if_abs_pos_embed=True,
-            if_rope=if_rope,
-            if_rope_residual=False,
-            bimamba_type=bimamba_type,
-            if_cls_token=False,  # No class token for segmentation
-            if_divide_out=True,
-            use_middle_cls_token=False,
+        backbone_kwargs = {
+            "img_size": 224,
+            "patch_size": patch_size,
+            "embed_dim": self.embed_dim,
+            "depth": self.depth,
+            "rms_norm": use_rms_norm,
+            "residual_in_fp32": residual_in_fp32,
+            "fused_add_norm": fused_add_norm,
+            "final_pool_type": "none",  # Keep spatial structure
+            "if_abs_pos_embed": True,
+            "if_rope": if_rope,
+            "if_rope_residual": False,
+            "bimamba_type": bimamba_type,
+            "if_cls_token": False,  # No class token for segmentation
+            "if_divide_out": True,
+            "use_middle_cls_token": False,
+        }
+        signature = inspect.signature(VisionMamba.__init__)
+        has_var_kw = any(
+            param.kind == inspect.Parameter.VAR_KEYWORD
+            for param in signature.parameters.values()
         )
+        if not has_var_kw:
+            valid_keys = set(signature.parameters.keys())
+            valid_keys.discard("self")
+            if "bimamba_type" not in valid_keys:
+                print("[RGBEncoder] VisionMamba has no bimamba_type; skipping it.")
+            backbone_kwargs = {
+                key: value for key, value in backbone_kwargs.items() if key in valid_keys
+            }
+
+        self.backbone = VisionMamba(**backbone_kwargs)
         
         if pretrained and weights_path:
             self.load_pretrained_weights(weights_path)
