@@ -69,7 +69,7 @@ class Config:
     CROP_SIZE: int = 512  # Random crop size during training
     MAX_ITERS: int = 25000  # Total training iterations
     VAL_INTERVAL: int = 2500  # Validate every N iterations
-    NUM_WORKERS: int = 8  # DataLoader workers
+    NUM_WORKERS: int = 16  # DataLoader workers
     PREFETCH_FACTOR: int = 4  # Batches prefetched per worker
     PIN_MEMORY: bool = True
     PERSISTENT_WORKERS: bool = True
@@ -143,7 +143,7 @@ class Config:
     ICPRS_VAL_SPLIT: float = 0.2
     ICPRS_SEED: int = 42
     
-    GPU_ID: int = 0# CUDA device index
+    GPU_ID: int = 1 # CUDA device index
     
     # ============== Logging ==============
     LOG_INTERVAL: int = 250
