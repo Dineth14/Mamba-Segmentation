@@ -24,7 +24,7 @@ from torch.utils.tensorboard import SummaryWriter
 from tqdm import tqdm
 
 # Local imports
-from config_icprs import Config
+from config import Config
 from model import build_model
 from dataset import build_dataloaders
 
