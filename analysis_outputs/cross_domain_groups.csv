@@ -1,0 +1,3 @@
+backbone_name,direction,structural_mIoU,natural_mIoU
+CNN_DeepLabv3p-resnet50,R2U,0.551538348197937,0.5474672317504883
+CNN_DeepLabv3p-resnet50,U2R,0.33327704668045044,0.3136084973812103

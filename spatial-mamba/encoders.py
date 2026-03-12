@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import os
 import sys
+import importlib
 import importlib.util
 from collections import OrderedDict
 from typing import List, Tuple, Optional
@@ -63,18 +64,22 @@ class RGBEncoder(nn.Module):
                 print(f"Warning: Pretrained weights path is not a file: {weights_path}")
 
         try:
-            spatialmamba_path = os.path.join(SPATIAL_MAMBA_MODELS, "spatialmamba.py")
-            spec = importlib.util.spec_from_file_location("spatialmamba", spatialmamba_path)
-            if spec is None or spec.loader is None:
-                raise ImportError(f"Failed to load Spatial-Mamba module from {spatialmamba_path}")
-            spatialmamba = importlib.util.module_from_spec(spec)
-            spec.loader.exec_module(spatialmamba)
+            spatialmamba = importlib.import_module("models.spatialmamba")
             Backbone_SpatialMamba = spatialmamba.Backbone_SpatialMamba
-        except Exception as exc:
-            raise ImportError(
-                "Spatial-Mamba is required for the RGB encoder. "
-                "Check that Spatial-Mamba/classification/models is available."
-            ) from exc
+        except Exception:
+            try:
+                spatialmamba_path = os.path.join(SPATIAL_MAMBA_MODELS, "spatialmamba.py")
+                spec = importlib.util.spec_from_file_location("spatialmamba", spatialmamba_path)
+                if spec is None or spec.loader is None:
+                    raise ImportError(f"Failed to load Spatial-Mamba module from {spatialmamba_path}")
+                spatialmamba = importlib.util.module_from_spec(spec)
+                spec.loader.exec_module(spatialmamba)
+                Backbone_SpatialMamba = spatialmamba.Backbone_SpatialMamba
+            except Exception as exc:
+                raise ImportError(
+                    "Spatial-Mamba is required for the RGB encoder. "
+                    "Check that Spatial-Mamba/classification/models is available."
+                ) from exc
 
         self.backbone = Backbone_SpatialMamba(
             out_indices=(0, 1, 2, 3),

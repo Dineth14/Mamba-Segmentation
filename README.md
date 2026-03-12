@@ -1,241 +1,224 @@
-# Mamba-Segmentation
+# 🚀 Mamba-Segmentation
+## A Controlled Benchmark of Visual State-Space Backbones with Domain-Shift and Boundary Analysis for Remote-Sensing Segmentation
 
-A comprehensive comparison of Mamba-based architectures for semantic segmentation on remote sensing datasets. This repository benchmarks multiple Mamba variants (MambaVision, VMamba, VisionMamba, and SpatialMamba) on LoveDA and ISPRS Potsdam datasets.
+### 🏆 Controlled, Reproducible, Deployment-Oriented Benchmark for RS Segmentation 🏆
 
-## 🏗️ Architecture Overview
+**Submitted to:** IGRAAS 2026  
+**Status:** Pending Acceptance
 
-This repository implements semantic segmentation using various Mamba-style backbones paired with a lightweight U-Net decoder:
+**Authors:** Nichula Wasalathilaka, Dineth Perea, Oshadha Samarakoon, Buddhi Wijenayake, Roshan Godaliyadda, Vijitha Herath, Parakrama Ekanayake  
+**Affiliation:** University of Peradeniya, Sri Lanka  
+**Contact:** `{e20425,e21291,e21345,e19445,roshang,vijitha,mpbe}@eng.pdn.ac.lk`
 
-### Model Backbones
+Visual State-Space backbones benchmarked under a **strictly controlled segmentation pipeline** where only the encoder changes. The repository reports in-domain accuracy, source-only cross-domain robustness, boundary sensitivity, and practical efficiency.
 
-- **[MambaVision](MambaVision/)** - Hybrid Mamba-Transformer architecture with efficient vision processing
-- **[VMamba](VMamba/)** - Visual State Space Model with 2D-selective scanning
-- **[VisionMamba](VisionMamba/)** - Bidirectional Mamba for vision tasks with domain adaptation support
-- **[spatial-mamba](spatial-mamba/)** - Spatial-aware Mamba architecture (UrbanMamba RGB variant)
+`🔥 Updates` • `🔭 Overview` • `✨ Why Controlled Benchmarking?` • `🧠 Method` • `⚡ Quick Start` • `🗂 Data` • `🚀 Train & Eval` • `🧪 Analysis` • `📊 Results` • `🙏 Acknowledgements` • `📜 Cite`
 
-Each backbone is integrated with a LightUNetDecoder for multi-scale feature fusion and dense prediction.
+## 🔥🔥 Updates
 
-## 📊 Datasets
+- **Mar 2026 - Documentation Refresh**  
+  Repository docs reorganized and aligned with paper-style benchmark reporting.
+- **Feb 2026 - Submission Update**  
+  Manuscript submitted to **IGRAAS 2026** and currently **pending acceptance**.
+- **Jan 2026 - Controlled Benchmark Pipeline Finalized**  
+  Unified 4-stage encoder interface, fixed decoder, and standardized efficiency protocol completed.
 
-### LoveDA (Land-cOVEr Domain Adaptive)
-- **Type:** RGB remote sensing imagery
-- **Task:** Multi-class semantic segmentation
-- **Resolution:** 512×512 patches
-- **Domains:** Urban and Rural scenes
-- **Configuration:** `config.py` in each model directory
+Ready to compare backbones fairly under real domain shift? Let’s go.
 
-### ISPRS Potsdam
-- **Type:** Urban aerial imagery (RGB + Infrared)
-- **Task:** 6-class semantic segmentation
-- **Resolution:** 512×512 patches (from 6000×6000 tiles)
-- **Classes:** Impervious surfaces, Building, Low vegetation, Tree, Car, Clutter
-- **Configuration:** `config_icprs.py` in each model directory
+## 🔭 Overview
 
-### Dataset Structure
+Remote-sensing semantic segmentation must handle:
 
-**LoveDA:**
-```
-DATA_ROOT/
-  Train/
-    Urban/
-      images_png/
-      masks_png/
-    Rural/
-      images_png/
-      masks_png/
-  Val/
-    ...
-  Test/
-    ...
-```
+- Fine boundaries (roads, building edges, thin structures)
+- Large-scene context
+- Illumination and appearance variability
+- Urban-rural domain shift
 
-**ISPRS Potsdam:**
-```
-DATA_ROOT/
-  Images/
-  Labels/
-  splits/
-    train.txt
-    val.txt
-    test.txt
-```
+This repository isolates encoder effects by fixing everything else.
 
-## 🚀 Quick Start
+### Backbone families benchmarked
 
-### Prerequisites
+- **Visual SSMs:** `VMamba`, `MambaVision`, `Spatial-Mamba`
+- **References:** CNN and Transformer encoders under the same decoder/protocol
+
+### Key evaluation settings
+
+- LoveDA: All->All, Urban->Rural, Rural->Urban (source-only, no adaptation)
+- ISPRS Potsdam: controlled high-resolution urban parsing
+- Unified efficiency protocol: Params/FLOPs/FPS/peak memory
+
+## ✨ Why Controlled Benchmarking?
+
+Many comparisons change multiple variables at once (decoder, training schedule, augmentations, interfaces), making conclusions unreliable.
+
+This benchmark enforces:
+
+- Same decoder for all backbones
+- Same optimization schedule and augmentations
+- Same input resolution and metric pipeline
+- Same output feature interface `{F1,F2,F3,F4}` with strides `{4,8,16,32}`
+
+So differences in results reflect **backbone behavior**, not pipeline drift.
+
+## 🧠 Method in ~30 Seconds
+
+1. Extract 4-stage features from each encoder (or project to unified interface).
+2. Feed into the same lightweight U-Net style decoder.
+3. Train with fixed optimization and augmentations.
+4. Evaluate in-domain + cross-domain + boundary diagnostics.
+5. Profile efficiency with a unified runtime/memory measurement setup.
+
+### Loss
+
+`L = L_lovasz + L_focal + 0.5 * L_boundary`
+
+- Lovasz-Softmax: IoU-oriented optimization
+- Focal: class imbalance mitigation
+- Boundary term: edge-focused penalty (2-pixel neighborhood)
+
+## ⚡ Quick Start
+
+### 1. Environment
+
 ```bash
-# Create environment
-conda create -n mamba-seg python=3.9
+cd Mamba-Segmentation
+conda create -n mamba-seg python=3.9 -y
 conda activate mamba-seg
+```
 
-# Install dependencies (example for MambaVision)
+### 2. Install dependencies (example)
+
+```bash
 cd MambaVision
 pip install -r requirements.txt
 ```
 
-### Training
+### 3. Configure and train
 
-1. **Choose a model architecture:**
-   ```bash
-   cd MambaVision  # or VMamba, VisionMamba, spatial-mamba
-   ```
+Edit `config.py` (LoveDA) or `config_icprs.py` (Potsdam):
 
-2. **Configure dataset and training:**
-   - For LoveDA: Edit `config.py`
-   - For ISPRS Potsdam: Edit `config_icprs.py`
-   
-   Update key parameters:
-   ```python
-   DATA_ROOT = '/path/to/dataset'
-   OUTPUT_DIR = '../Comparison_Experiments/mambavision_base_512'
-   VARIANT = 'base'  # or 'tiny', 'small', 'large'
-   ```
+- `DATA_ROOT`
+- `OUTPUT_DIR`
+- model variant / domain flags (if available)
 
-3. **Run training:**
-   ```bash
-   python train.py
-   ```
+Run:
 
-### Example Workflows
+```bash
+python train.py
+```
 
-**Train MambaVision-Base on LoveDA:**
+## 🗂 Data Preparation
+
+### LoveDA
+
+```text
+DATA_ROOT/
+├── Train/
+│   ├── Urban/
+│   │   ├── images_png/
+│   │   └── masks_png/
+│   └── Rural/
+│       ├── images_png/
+│       └── masks_png/
+├── Val/
+└── Test/
+```
+
+### ISPRS Potsdam
+
+```text
+DATA_ROOT/
+├── Images/
+├── Labels/
+└── splits/
+    ├── train.txt
+    ├── val.txt
+    └── test.txt
+```
+
+## 🚀 Train & Evaluation
+
+### Example: LoveDA
+
 ```bash
 cd MambaVision
-# Edit config.py: set DATA_ROOT and OUTPUT_DIR
+# edit config.py
 python train.py
 ```
 
-**Train VMamba-Small on ISPRS Potsdam:**
+### Example: ISPRS Potsdam
+
 ```bash
 cd VMamba
-# Edit config_icprs.py: set DATA_ROOT and OUTPUT_DIR
+# edit config_icprs.py
 python train.py
 ```
 
-**Domain-specific training (Rural only):**
+### Efficiency profiling
+
 ```bash
-# Edit config to set TRAIN_ON_RURAL=True, TRAIN_ON_URBAN=False
-python train.py
+cd ..
+python tools/benchmark_fps_mem.py --model mambavision --variant base --device cuda:0
+python tools/benchmark_fps_mem_total.py --device cuda:0 --batch_size 1
 ```
 
-## 📁 Repository Structure
+Outputs are saved under:
 
-```
-Mamba-Segmentation/
-├── MambaVision/              # MambaVision implementation
-│   ├── train.py
-│   ├── config.py             # LoveDA config
-│   ├── config_icprs.py       # Potsdam config
-│   ├── dataset.py            # LoveDA dataloader
-│   ├── dataset_isprs.py      # Potsdam dataloader
-│   └── ...
-├── VMamba/                   # VMamba implementation
-├── VisionMamba/              # VisionMamba implementation  
-├── spatial-mamba/            # SpatialMamba implementation
-├── Comparison_Experiments/   # LoveDA experiment results
-│   ├── README.md             # Detailed experiment documentation
-│   ├── mambavision_base_512/
-│   ├── vmamba_small_512/
-│   └── ...
-├── Comparison_Experiments_ICPRS_potsdam/  # Potsdam results
-│   ├── README.md
-│   ├── mambavision_large_512/
-│   └── ...
-├── .gitignore                # Excludes checkpoints/logs
-└── README.md                 # This file
-```
+- `Comparison_Experiments/`
+- `Comparison_Experiments_ICPRS_potsdam/`
+- `analysis_outputs/`
 
-## 🧪 Experiments
+## 🧪 Diagnostic Analysis
 
-This repository contains extensive experimental comparisons across:
-- **4 architectures** (MambaVision, VMamba, VisionMamba, SpatialMamba)
-- **4 model sizes** (tiny, small, base, large)
-- **3 training strategies** (full dataset, rural-only, urban-only)
-- **2 datasets** (LoveDA, ISPRS Potsdam)
+Run paper-aligned analysis scripts:
 
-See [Comparison_Experiments/README.md](Comparison_Experiments/README.md) and [Comparison_Experiments_ICPRS_potsdam/README.md](Comparison_Experiments_ICPRS_potsdam/README.md) for detailed experiment documentation and model configurations.
-
-## 📈 Results and Outputs
-
-Each experiment produces:
-- **Checkpoints** (`checkpoints/`) - Model weights at each epoch
-- **Logs** (`logs/`) - Detailed training logs
-- **TensorBoard** (`tensorboard/`) - Training curves and metrics
-- **Predictions** (`val_preds/`) - Validation set predictions
-
-**Note:** Result directories are gitignored to keep the repository lightweight. Only code and configurations are tracked.
-
-## 🔧 Configuration
-
-Key configuration parameters in `config.py` / `config_icprs.py`:
-
-```python
-# Dataset
-DATA_ROOT = '/path/to/dataset'
-BATCH_SIZE = 8
-NUM_WORKERS = 4
-
-# Model
-VARIANT = 'base'  # 'tiny', 'small', 'base', 'large', 'large2', 'tiny2'
-IN_CHANNELS = 3   # 3 for RGB, 4 for RGBIR
-
-# Training
-EPOCHS = 100
-LEARNING_RATE = 1e-4
-WEIGHT_DECAY = 1e-4
-
-# Output
-OUTPUT_DIR = '../Comparison_Experiments/model_name'
-
-# Domain-specific (LoveDA only)
-TRAIN_ON_URBAN = True
-TRAIN_ON_RURAL = True
-```
-
-## 🛠️ Development
-
-### Adding New Models
-1. Create model directory with `train.py`, `config.py`, and dataset loaders
-2. Implement backbone integration with decoder
-3. Add experiment output directory to `.gitignore`
-
-### Git Workflow
 ```bash
-# Results are automatically ignored
-git add .
-git commit -m "Add new experiment configuration"
-git push
-
-# To include submodules
-git submodule update --init --recursive
+python analysis/boundary_analysis.py --device cuda:0 --use_pretrained 1
+python analysis/cross_domain_analysis.py --device cuda:0 --use_pretrained 1
+python analysis/rotation_analysis.py --device cuda:0 --use_pretrained 1 --pack_rotations 1 --families mambavision,vmamba,spatialmamba
 ```
 
-## 📝 Citation
+These scripts support boundary-vs-interior diagnostics and robustness profiling.
 
-If you use this code in your research, please cite the respective papers for:
-- MambaVision
-- VMamba  
-- VisionMamba (Vim)
-- SpatialMamba / UrbanMamba
-- LoveDA dataset
-- ISPRS Potsdam dataset
+## 📊 Results (from manuscript)
 
-## 📄 License
+### Main findings
 
-See individual model directories for specific licenses. This wrapper code is provided as-is for research purposes.
+- Scaling inside a backbone family gives limited gains under fixed decoder constraints.
+- Cross-domain robustness is asymmetric (Rural->Urban generally stronger than Urban->Rural).
+- Boundary sensitivity is the dominant failure mode under domain shift.
 
-## 🤝 Contributing
+### Representative LoveDA/Potsdam trends
 
-Contributions welcome! Please:
-1. Keep result directories out of commits (use .gitignore)
-2. Document new models in this README
-3. Add experiment documentation to Comparison_Experiments/README.md
-4. Follow existing code structure and naming conventions
+| Type | Backbone | LoveDA mIoU | U->R | R->U | Potsdam mIoU |
+| --- | --- | ---: | ---: | ---: | ---: |
+| CNN | DeepLabv3 encoder (controlled) | 43.01 | 30.36 | 39.98 | 75.09 |
+| Transformer | UNetFormer encoder (controlled) | 48.61 | 34.56 | 44.84 | 74.99 |
+| SSM | VMamba-Small | 55.66 | 40.62 | 53.52 | 77.59 |
+| SSM | MambaVision-L | 55.25 | 38.53 | 54.01 | 77.07 |
+| SSM | Spatial-Mamba-B | 48.03 | 35.23 | 46.55 | 70.00 |
 
-## 🐛 Issues
+## 🙏 Acknowledgements
 
-For bugs or questions:
-1. Check existing issues
-2. Provide full error trace and configuration
-3. Specify dataset, model variant, and environment details
+This benchmark builds on the broader open-source ecosystem and prior work in:
 
+- Visual SSM backbones (VMamba, MambaVision, Spatial-Mamba)
+- CNN and Transformer segmentation baselines
+- LoveDA and ISPRS Potsdam datasets
+
+## 📜 Citation
+
+If this benchmark helps your research, please cite:
+
+```bibtex
+@article{wasalathilaka2026controlledbenchmark,
+  title={A Controlled Benchmark of Visual State-Space Backbones with Domain-Shift and Boundary Analysis for Remote-Sensing Segmentation},
+  author={Wasalathilaka, Nichula and Perea, Dineth and Samarakoon, Oshadha and Wijenayake, Buddhi and Godaliyadda, Roshan and Herath, Vijitha and Ekanayake, Parakrama},
+  journal={Submitted to IGRAAS 2026},
+  year={2026}
+}
+```
+
+## 🌍🛰️ Inspired by fair benchmarking?
+
+If this repository is useful for your work, please give it a STAR.

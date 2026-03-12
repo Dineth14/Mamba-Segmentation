@@ -18,8 +18,8 @@ class Config:
     DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
     DATASET: str = "loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_small_512_3/"
-    RESUME_PATH: str = ""
+    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_base_512_2/"
+    RESUME_PATH: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_base_512_2/checkpoints/checkpoint_iter_25000.pth"
     VMAMBA_WEIGHT_SET: str = "imagenet1k"  # "imagenet1k" | "ade20k" | "vanilla_ade20k"
     VMAMBA_WEIGHTS_DIR: str = ""
     VMAMBA_WEIGHTS_DIR_MAP: Dict[str, str] = field(default_factory=lambda: {
@@ -82,7 +82,7 @@ class Config:
     # ============== Training ==============
     BATCH_SIZE: int = 4 
     CROP_SIZE: int = 512  # Random crop size during training
-    MAX_ITERS: int = 25000  # Total training iterations
+    MAX_ITERS: int = 50000  # Total training iterations
     VAL_INTERVAL: int = 2500  # Validate every N iterations
     NUM_WORKERS: int = 8  # DataLoader workers
     PREFETCH_FACTOR: int = 4  # Batches prefetched per worker
