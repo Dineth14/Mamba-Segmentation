@@ -1,2 +1,0 @@
-family,variant,split,domain,mIoU,OA,ParamsM,FLOPsG,FPS,MemGB,ckpt_path
-MambaVision,small,val,rural,0.4645442068576813,0.7163495421409607,55.637295,65.609842688,35.11543677079947,0.455078125,/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/mambavision_small_512/checkpoints/best.pth

@@ -76,6 +76,14 @@ Comparison_Experiments_ICPRS_potsdam/**/*.log
 !Comparison_Experiments/**/README.md
 !Comparison_Experiments_ICPRS_potsdam/**/README.md
 
+# Ignore per-experiment intermediate result CSVs
+**/domain_results.csv
+Comparison_Experiments/**/*.csv
+Comparison_Experiments_ICPRS_potsdam/**/*.csv
+
+# Weights directory (pre-trained backbone weights)
+weights/imagenet/
+
 # OS/editor
 .DS_Store
 Thumbs.db
