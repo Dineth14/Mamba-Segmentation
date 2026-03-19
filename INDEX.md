@@ -10,6 +10,9 @@ Quick reference guide for navigating and using the Mamba-Segmentation repository
 | [STRUCTURE.md](STRUCTURE.md) | Detailed repository organization guide |
 | [CONTRIBUTING.md](CONTRIBUTING.md) | Guidelines for adding models and experiments |
 | [INDEX.md](INDEX.md) | This file - navigation reference |
+| [analysis_outputs/README.md](analysis_outputs/README.md) | Generated analysis artifacts and logs |
+| [TransformerSwinTiny/README.md](TransformerSwinTiny/README.md) | Transformer Swin-Tiny baseline usage |
+| [Qualitative Analysis/README.md](Qualitative%20Analysis/README.md) | Qualitative notebooks and visualization assets |
 
 ## 🔬 Model Implementations
 
@@ -140,7 +143,7 @@ If using this repository, cite:
 - LoveDA and ISPRS Potsdam dataset papers
 - This benchmarking framework
 
-**Paper Status:** Submitted to IGRAAS 2026 (Pending Acceptance)
+**Paper Status:** Accepted at IGRAAS 2026
 
 ## 🐛 Troubleshooting
 
@@ -225,5 +228,5 @@ python tools/plot_loveda_throughput_miou.py --csv_path Comparison_Experiments/fp
 ---
 
 **Last Updated:** February 2026  
-**Paper Status:** Submitted to IGRAAS 2026 (Pending Acceptance)
+**Paper Status:** Accepted at IGRAAS 2026
 

@@ -3,7 +3,7 @@
 
 This file describes the repository organization in the same style as the project README.
 
-`🔭 Overview` • `🏗 Core Modules` • `🧪 Experiments` • `⚡ Efficiency Tools` • `📊 Analysis` • `🚀 Workflow`
+`🔭 Overview` • `🏗 Core Modules` • `🧪 Experiments` • `⚡ Efficiency Tools` • `📊 Analysis` • `🧭 Naming Rules` • `🚀 Workflow`
 
 ## 🔭 Overview
 
@@ -93,6 +93,23 @@ analysis_outputs/
 
 These modules support the paper's diagnostic claims on boundary sensitivity and domain-shift asymmetry.
 
+## 🧭 Naming Rules
+
+To keep the repository consistent and maintainable:
+
+1. Use stable folder names in `snake_case` or established model names without spaces.
+2. Keep model family folders at repository root (for example `VMamba/`, `MambaVision/`, `TransformerSwinTiny/`).
+3. Store generated outputs only in experiment or output folders, not source directories.
+4. Keep per-folder `README.md` files updated when adding scripts, configs, or assets.
+5. Use lowercase variant names in experiment folder names (for example `vmamba_small_512`).
+
+Current legacy names kept for backward compatibility:
+
+- `Qualitative Analysis/` (space in name)
+- Mixed historical prefixes in experiments (for example `Vmamb_*` and `VisionMamba_*`)
+
+Use normalized names for new experiments and new folders.
+
 ## 🚀 Standard Workflow
 
 1. Pick backbone family + variant.
@@ -104,8 +121,7 @@ These modules support the paper's diagnostic claims on boundary sensitivity and 
 
 ## 📤 Publication Note
 
-- Submitted to IGRAAS 2026
-- Pending acceptance
+- Accepted at IGRAAS 2026
 
 ## 🔗 Related Docs
 
@@ -114,3 +130,6 @@ These modules support the paper's diagnostic claims on boundary sensitivity and 
 - `CONTRIBUTING.md` - extension guidelines
 - `tools/README.md` - utility script details
 - `analysis/README.md` - analysis command reference
+- `analysis_outputs/README.md` - generated analysis artifacts
+- `TransformerSwinTiny/README.md` - Transformer Swin-Tiny baseline guide
+- `Qualitative Analysis/README.md` - qualitative notebooks and assets
