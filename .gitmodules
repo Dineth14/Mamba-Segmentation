@@ -1,15 +1,6 @@
 [submodule "MambaVision/MambaVision"]
 	path = MambaVision/MambaVision
 	url = https://github.com/NVlabs/MambaVision
-[submodule "CNN_DeepLabv3p/MambaVision"]
-	path = CNN_DeepLabv3p/MambaVision
-	url = https://github.com/NVlabs/MambaVision
-[submodule "CNN_UNet/MambaVision"]
-	path = CNN_UNet/MambaVision
-	url = https://github.com/NVlabs/MambaVision
-[submodule "TransformerUNetFormer/MambaVision"]
-	path = TransformerUNetFormer/MambaVision
-	url = https://github.com/NVlabs/MambaVision
 [submodule "Swin-Transformer"]
 	path = Swin-Transformer
 	url = https://github.com/microsoft/Swin-Transformer
