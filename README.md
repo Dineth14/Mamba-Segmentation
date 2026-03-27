@@ -45,9 +45,10 @@ Remote-sensing segmentation benchmarks have a fatal flaw: they change the backbo
 
 **Outcome:** differences in results reflect backbone behavior. Nothing else.
 
-<!-- TODO: Add architecture figure -->
-<!-- ![Controlled Pipeline](assets/pipeline_overview.png) -->
-<!-- *Lock the pipeline. Swap the backbone. Read the truth.* -->
+<p align="center">
+  <img src="IGARSS%202026/Architecture.png" alt="Controlled Pipeline Architecture" width="100%">
+</p>
+<p align="center"><i>Lock the pipeline. Swap the backbone. Read the truth. Three SSM families (Spatial-Mamba, MambaVision, VMamba) share a single U-Net decoder and standardized feature interface {F1–F4}.</i></p>
 
 ---
 
@@ -274,6 +275,13 @@ Every row shares the same decoder, loss, optimizer, schedule, augmentations, and
 
 > 🏆 **VMamba-Small. 55.66 mIoU. +7.05 over the best Transformer. +12.65 over the best CNN. Same decoder. Same training. No tricks.**
 
+### Accuracy vs. Throughput
+
+<p align="center">
+  <img src="IGARSS%202026/fps_vs_miou.png" alt="mIoU vs Inference Throughput" width="60%">
+</p>
+<p align="center"><i>mIoU (%) vs. inference throughput (FPS) for all SSM variants. VMamba holds near-peak accuracy across all sizes. MambaVision trades speed for capacity with diminishing returns. Spatial-Mamba sits in the lower tier.</i></p>
+
 ### Key Takeaways
 
 🔥 **SSMs dominate the fair fight.** VMamba-Small beats UNetFormer by +7.05 and DeepLabv3 by +12.65 on LoveDA — under identical conditions. This is the backbone, not the pipeline.
@@ -283,6 +291,20 @@ Every row shares the same decoder, loss, optimizer, schedule, augmentations, and
 🔄 **Domain transfer is asymmetric — and backbone-agnostic.** Rural→Urban outperforms Urban→Rural by 10–15 points across every family. VMamba-Small: 53.52 R→U vs. 40.62 U→R. This is a data distribution property, not a model property.
 
 🧱 **Boundaries are the unsolved failure mode.** Under domain shift, interior accuracy holds. Boundary accuracy collapses. Every backbone, every family, same story. Whoever cracks boundary sensitivity under distribution shift wins the next round.
+
+### Qualitative Results — LoveDA
+
+<p align="center">
+  <img src="IGARSS%202026/loveda_qualitative_detailed_enhanced.png" alt="LoveDA Qualitative Results" width="85%">
+</p>
+<p align="center"><i>Predictions + error maps (magenta = false positive, dark green = false negative) on LoveDA Urban and Rural scenes. VMamba-S and VMamba-B produce the cleanest boundaries; Spatial-Mamba-B shows the most false positives at class transitions.</i></p>
+
+### Qualitative Results — ISPRS Potsdam
+
+<p align="center">
+  <img src="IGARSS%202026/potsdam_qualitative_detailed_enhanced.png" alt="ISPRS Potsdam Qualitative Results" width="85%">
+</p>
+<p align="center"><i>Predictions + error maps on ISPRS Potsdam. All SSM variants handle large homogeneous regions well; errors concentrate at fine-grained boundaries (cars, narrow roads) — consistent with the boundary analysis findings.</i></p>
 
 ---
 
