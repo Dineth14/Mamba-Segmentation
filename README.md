@@ -80,9 +80,9 @@ Decoder:     fixed lightweight U-Net (256ch, MambaBlock2d, addition skips)
 Interface:   {F1, F2, F3, F4} at strides {4, 8, 16, 32}
 Training:    50k iters · AdamW · poly LR decay · 512×512 crops · fixed augmentations
 Loss:        L = L_lovász + L_focal + 0.5 × L_boundary
-               ├─ Lovász-Softmax   → direct IoU optimization
-               ├─ Focal (γ=2.0)    → class imbalance handling
-               └─ Boundary (2px)   → edge penalty with warmup
+               ├─ Lovász-Softmax  → direct IoU optimization
+               ├─ Focal (γ=2.0)   → class imbalance handling
+               └─ Boundary (2px)  → edge penalty with warmup
 ```
 
 **Backbone families tested:**
@@ -334,6 +334,7 @@ This work builds on prior advances in visual state-space models and remote-sensi
 ## 📜 Citation
 
 If Mamba-Segmentation fuels your research, please cite:
+
 
 ```bibtex
 @article{wasalathilaka2026controlledbenchmark,
