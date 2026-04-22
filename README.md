@@ -4,7 +4,7 @@
 
 ### 🏆 The First Fair-Fight Benchmark for SSM vs. CNN vs. Transformer Backbones in Remote Sensing 🏆
 
-[![📄 Paper](https://img.shields.io/badge/📄_IGRAAS_2026-Paper-blue)](https://doi.org/PLACEHOLDER)
+[![📄 Paper](https://img.shields.io/badge/📄_IGRAAS_2026-Paper-blue)](https://arxiv.org/abs/2604.18721v1)
 [![🏆 Venue](https://img.shields.io/badge/🏆_IGRAAS_2026-Accepted-brightgreen)](https://doi.org/PLACEHOLDER)
 [![🐍 Python](https://img.shields.io/badge/🐍_Python-3.9-3776AB)](https://www.python.org/)
 [![🔥 PyTorch](https://img.shields.io/badge/🔥_PyTorch-2.0+-EE4C2C)](https://pytorch.org/)
@@ -24,8 +24,7 @@ Ready to see which backbone actually wins a fair fight? Let's go.
 
 | Date | Update |
 |---|---|
-| **Mar 2026** | Checkpoints + analysis notebooks released — pretrained weights for all five backbone families available |
-| **Mar 2026** | **Paper Accepted** — IGRAAS 2026 (camera-ready submitted) |
+| **Apr 2026** | **Paper Accepted** — IGRAAS 2026 (camera-ready submitted) |
 | **Feb 2026** | Code released — full controlled training pipeline with per-backbone configs |
 | **Jan 2026** | Analysis suite released — boundary, cross-domain, and rotation diagnostics |
 
@@ -337,15 +336,14 @@ If Mamba-Segmentation fuels your research, please cite:
 
 
 ```bibtex
-@article{wasalathilaka2026controlledbenchmark,
-  title={A Controlled Benchmark of Visual State-Space Backbones with
-         Domain-Shift and Boundary Analysis for Remote-Sensing
-         Segmentation},
-  author={Wasalathilaka, Nichula and Perea, Dineth and Samarakoon,
-          Oshadha and Wijenayake, Buddhi and Godaliyadda, Roshan and
-          Herath, Vijitha and Ekanayake, Parakrama},
-  journal={IGRAAS 2026},
-  year={2026}
+@misc{wasalathilaka2026controlledbenchmarkvisualstatespace,
+      title={A Controlled Benchmark of Visual State-Space Backbones with Domain-Shift and Boundary Analysis for Remote-Sensing Segmentation}, 
+      author={Nichula Wasalathilaka and Dineth Perera and Oshadha Samarakoon and Buddhi Wijenayake and Roshan Godaliyadda and Vijitha Herath and Parakrama Ekanayake},
+      year={2026},
+      eprint={2604.18721},
+      archivePrefix={arXiv},
+      primaryClass={eess.IV},
+      url={https://arxiv.org/abs/2604.18721}, 
 }
 ```
 
