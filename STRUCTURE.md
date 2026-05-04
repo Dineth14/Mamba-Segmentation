@@ -1,9 +1,9 @@
 # 🗂 Mamba-Segmentation Structure
 ## Controlled Backbone Benchmark Layout (Paper-Aligned)
 
-This file describes the repository organization in the same style as the project README.
+This file describes the repository organization.
 
-`🔭 Overview` • `🏗 Core Modules` • `🧪 Experiments` • `⚡ Efficiency Tools` • `📊 Analysis` • `🧭 Naming Rules` • `🚀 Workflow`
+`🔭 Overview` • `🏗 Core Modules` • `🔌 Backbones` • `⚙️ Configs` • `🧪 Experiments` • `⚡ Efficiency Tools` • `📊 Analysis` • `🧭 Naming Rules` • `🚀 Workflow`
 
 ## 🔭 Overview
 
@@ -13,54 +13,104 @@ The repository is organized around a single principle:
 
 This allows fair comparison across visual SSM, CNN, and Transformer backbones.
 
-## 🏗 Core Modules
+## 🏗 Repository Layout
 
 ```text
 Mamba-Segmentation/
-├── MambaVision/
-├── VMamba/
-├── VisionMamba/
-├── spatial-mamba/
-├── CNN_DeepLabv3p/
-├── CNN_UNet/
-├── Swin-Transformer/
-├── TransformerSwinTiny/
-└── TransformerUNetFormer/
+├── train.py                        # Unified training entry point
+├── eval_domain.py                  # Unified domain evaluation
+├── setup_backbones.sh              # Clone external backbone repos
+│
+├── core/                           # Shared model code
+│   ├── model.py                    # SegmentationModel (encoder + decoder)
+│   ├── config_loader.py            # YAML config loader with env var + CLI overrides
+│   ├── light_decoder.py            # LightUNetDecoder
+│   ├── dataset.py                  # LoveDA dataset loader
+│   ├── dataset_isprs.py            # ISPRS Potsdam dataset loader
+│   ├── losses.py
+│   ├── parts.py
+│   └── utils.py
+│
+├── backbones/                      # Thin encoder wrappers (one per backbone family)
+│   ├── mambavision/encoders.py
+│   ├── vmamba/encoders.py
+│   ├── visionmamba/encoders.py
+│   ├── spatialmamba/encoders.py
+│   ├── swintransformer/encoders.py
+│   └── cnn/encoders.py
+│
+├── configs/                        # YAML configs (dataset paths via env vars)
+│   ├── base.yaml                   # Shared defaults
+│   ├── vmamba.yaml
+│   ├── vmamba_potsdam.yaml
+│   ├── mambavision.yaml
+│   ├── mambavision_potsdam.yaml
+│   ├── visionmamba.yaml
+│   ├── spatialmamba.yaml
+│   ├── cnn_deeplabv3p.yaml
+│   ├── cnn_unet.yaml
+│   ├── transformer_swintiny.yaml
+│   └── transformer_unetformer.yaml
+│
+├── analysis/                       # Analysis scripts
+├── analysis_outputs/               # Generated CSVs, PNGs, logs (gitignored)
+├── Comparison_Experiments/         # LoveDA experiment checkpoints (gitignored)
+├── Comparison_Experiments_ICPRS_potsdam/  # Potsdam checkpoints (gitignored)
+├── tools/                          # Benchmarking utilities
+├── weights/                        # Pre-trained backbone weights (gitignored)
+└── Qualitative Analysis/           # Qualitative result assets
 ```
 
-### Typical model directory interface
+## 🔌 Backbone Wrappers
 
-```text
-<ModelFamily>/
-├── train.py
-├── config.py
-├── config_icprs.py
-├── dataset.py
-├── dataset_isprs.py
-├── model.py
-├── encoders.py
-├── light_decoder.py
-├── losses.py
-└── utils.py
+Each backbone family has a thin wrapper in `backbones/<name>/encoders.py` that exposes a single `RGBEncoder` class with an `out_channels` attribute. The wrapper adds the cloned backbone repo to `sys.path` at import time.
+
+External backbone repos are **not** included in this repo. Clone them with:
+
+```bash
+bash setup_backbones.sh              # all backbones
+bash setup_backbones.sh vmamba       # specific backbone only
+```
+
+Expected clone locations:
+
+| Backbone | Clone path |
+|----------|------------|
+| MambaVision | `MambaVision/MambaVision/` |
+| VMamba | `VMamba/VMamba/` |
+| Vision Mamba (Vim) | `VisionMamba/Vim/` |
+| Spatial-Mamba | `spatial-mamba/Spatial-Mamba/` |
+| Swin Transformer | `Swin-Transformer/` |
+
+## ⚙️ Config System
+
+All configs use YAML with:
+- `extends: base.yaml` for inheritance
+- `${ENV_VAR:default}` for dataset paths (set `LOVEDA_ROOT` or `POTSDAM_ROOT`)
+- CLI `key=value` overrides at runtime
+
+```bash
+export LOVEDA_ROOT=/path/to/LoveDA
+python train.py --config configs/vmamba.yaml batch_size=4
 ```
 
 ## 🧪 Experiment Roots
 
+Experiment directories are gitignored (checkpoints are large). Download weights from HuggingFace:
+
 ```text
-Mamba-Segmentation/
-├── Comparison_Experiments/                  # LoveDA experiments
-└── Comparison_Experiments_ICPRS_potsdam/    # ISPRS Potsdam experiments
+Comparison_Experiments/              # LoveDA experiments  (gitignored)
+Comparison_Experiments_ICPRS_potsdam/  # Potsdam experiments (gitignored)
 ```
 
-Typical experiment folder:
+Typical experiment folder layout:
 
 ```text
 <experiment_name>/
-├── checkpoints/
+├── checkpoints/best.pth
 ├── logs/
 ├── tensorboard/
-├── val_preds/
-└── *.log
+└── val_preds/
 ```
 
 ## ⚡ Efficiency Tools
@@ -85,7 +135,7 @@ analysis/
 ├── rotation_analysis.py
 └── analysis_utils.py
 
-analysis_outputs/
+analysis_outputs/    ← generated outputs (gitignored)
 ├── boundary_vs_interior.csv
 ├── cross_domain_groups.csv
 └── rotation_robustness.csv
@@ -95,41 +145,26 @@ These modules support the paper's diagnostic claims on boundary sensitivity and 
 
 ## 🧭 Naming Rules
 
-To keep the repository consistent and maintainable:
-
-1. Use stable folder names in `snake_case` or established model names without spaces.
-2. Keep model family folders at repository root (for example `VMamba/`, `MambaVision/`, `TransformerSwinTiny/`).
-3. Store generated outputs only in experiment or output folders, not source directories.
-4. Keep per-folder `README.md` files updated when adding scripts, configs, or assets.
-5. Use lowercase variant names in experiment folder names (for example `vmamba_small_512`).
-
-Current legacy names kept for backward compatibility:
-
-- `Qualitative Analysis/` (space in name)
-- Mixed historical prefixes in experiments (for example `Vmamb_*` and `VisionMamba_*`)
-
-Use normalized names for new experiments and new folders.
+1. Use `snake_case` for new backbone config names and experiment folders.
+2. Backbone wrappers live in `backbones/<lowercase_name>/`.
+3. Store generated outputs only in gitignored dirs (`analysis_outputs/`, `Comparison_Experiments/`).
+4. Use lowercase variant names in experiment folder names (e.g. `vmamba_small_512`).
 
 ## 🚀 Standard Workflow
 
-1. Pick backbone family + variant.
-2. Configure data/output paths.
-3. Train under fixed protocol.
-4. Evaluate All->All and cross-domain (U->R, R->U).
-5. Run boundary and robustness analysis.
-6. Profile efficiency metrics.
+1. Clone repo and run `bash setup_backbones.sh <backbone>`.
+2. Set `LOVEDA_ROOT` or `POTSDAM_ROOT` environment variable.
+3. Run `python train.py --config configs/<backbone>.yaml`.
+4. Evaluate with `python eval_domain.py --config configs/<backbone>.yaml --ckpt <path>`.
+5. Run analysis scripts and efficiency profiling.
 
 ## 📤 Publication Note
 
-- Accepted at IGRAAS 2026
+- Accepted at IGARSS 2026
 
 ## 🔗 Related Docs
 
-- `README.md` - benchmark narrative and quick start
-- `INDEX.md` - project navigation
-- `CONTRIBUTING.md` - extension guidelines
-- `tools/README.md` - utility script details
-- `analysis/README.md` - analysis command reference
-- `analysis_outputs/README.md` - generated analysis artifacts
-- `TransformerSwinTiny/README.md` - Transformer Swin-Tiny baseline guide
-- `Qualitative Analysis/README.md` - qualitative notebooks and assets
+- `README.md` — benchmark narrative and quick start
+- `INDEX.md` — project navigation
+- `tools/` — utility script details
+- `analysis/` — analysis command reference

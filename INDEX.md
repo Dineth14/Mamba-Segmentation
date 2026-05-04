@@ -1,232 +1,149 @@
 # Mamba-Segmentation Repository Index
 
-Quick reference guide for navigating and using the Mamba-Segmentation repository.
+Quick reference for navigating and using the Mamba-Segmentation repository.
 
 ## 📖 Documentation Files
 
 | File | Purpose |
 |------|---------|
-| [README.md](README.md) | Main repository documentation and quick start |
+| [README.md](README.md) | Main documentation and quick start |
 | [STRUCTURE.md](STRUCTURE.md) | Detailed repository organization guide |
-| [CONTRIBUTING.md](CONTRIBUTING.md) | Guidelines for adding models and experiments |
-| [INDEX.md](INDEX.md) | This file - navigation reference |
-| [analysis_outputs/README.md](analysis_outputs/README.md) | Generated analysis artifacts and logs |
-| [TransformerSwinTiny/README.md](TransformerSwinTiny/README.md) | Transformer Swin-Tiny baseline usage |
-| [Qualitative Analysis/README.md](Qualitative%20Analysis/README.md) | Qualitative notebooks and visualization assets |
+| [INDEX.md](INDEX.md) | This file — navigation reference |
 
-## 🔬 Model Implementations
+## 🗂 Repository Layout
 
-### Mamba-Based Architectures
+```
+Mamba-Segmentation/
+├── train.py                 ← unified training entry point
+├── eval_domain.py           ← domain evaluation (All/Urban/Rural)
+├── setup_backbones.sh       ← clone external backbone repos
+│
+├── core/                    ← shared model code
+│   ├── model.py             ← SegmentationModel
+│   ├── config_loader.py     ← YAML loader (env vars + CLI overrides)
+│   ├── light_decoder.py
+│   ├── dataset.py           ← LoveDA loader
+│   ├── dataset_isprs.py     ← ISPRS Potsdam loader
+│   ├── losses.py
+│   ├── parts.py
+│   └── utils.py
+│
+├── backbones/               ← thin RGBEncoder wrappers
+│   ├── mambavision/
+│   ├── vmamba/
+│   ├── visionmamba/
+│   ├── spatialmamba/
+│   ├── swintransformer/
+│   └── cnn/
+│
+├── configs/                 ← YAML configs
+│   ├── base.yaml            ← shared defaults
+│   ├── vmamba.yaml
+│   ├── vmamba_potsdam.yaml
+│   ├── mambavision.yaml
+│   ├── mambavision_potsdam.yaml
+│   ├── visionmamba.yaml
+│   ├── visionmamba_potsdam.yaml
+│   ├── spatialmamba.yaml
+│   ├── spatialmamba_potsdam.yaml
+│   ├── cnn_deeplabv3p.yaml
+│   ├── cnn_unet.yaml
+│   ├── transformer_swintiny.yaml
+│   └── transformer_unetformer.yaml
+│
+├── analysis/                ← boundary/domain/rotation analysis scripts
+├── analysis_outputs/        ← generated CSVs + plots (gitignored)
+├── Comparison_Experiments/  ← LoveDA checkpoints (gitignored)
+├── Comparison_Experiments_ICPRS_potsdam/  ← Potsdam checkpoints (gitignored)
+├── tools/                   ← FPS/memory benchmarking utilities
+└── weights/                 ← pre-trained backbone weights (gitignored)
+```
 
-| Model | Directory | Description | Variants |
-|-------|-----------|-------------|----------|
-| **MambaVision** | [MambaVision/](MambaVision/) | Hybrid Mamba-Transformer from NVIDIA | tiny, small, base, large |
-| **VMamba** | [VMamba/](VMamba/) | Visual state space with 2D-selective scanning | tiny, small, base |
-| **VisionMamba (Vim)** | [VisionMamba/](VisionMamba/) | Bidirectional Mamba for vision | tiny, small, base |
-| **SpatialMamba** | [spatial-mamba/](spatial-mamba/) | Spatially-aware Mamba variant | tiny, small, base |
+## 🔌 Backbones
 
-**Start here:** Choose a model and read its [README.md](MambaVision/README.md) for architecture details.
+External backbone repos are cloned by `setup_backbones.sh` — they are **not** bundled in this repo.
 
-### Baseline Architectures (CNN + Transformer)
+| Backbone | Config | Clone path |
+|----------|--------|-----------|
+| MambaVision | `configs/mambavision.yaml` | `MambaVision/MambaVision/` |
+| VMamba | `configs/vmamba.yaml` | `VMamba/VMamba/` |
+| Vision Mamba (Vim) | `configs/visionmamba.yaml` | `VisionMamba/Vim/` |
+| Spatial-Mamba | `configs/spatialmamba.yaml` | `spatial-mamba/Spatial-Mamba/` |
+| Swin Transformer | `configs/transformer_swintiny.yaml` | `Swin-Transformer/` |
+| CNN (ResNet-50) | `configs/cnn_deeplabv3p.yaml` | — (torchvision) |
 
-| Model | Directory | Description |
-|-------|-----------|-------------|
-| **CNN-DeepLabv3+** | [CNN_DeepLabv3p/](CNN_DeepLabv3p/) | ResNet-50 + DeepLabv3+ decoder |
-| **CNN-UNet** | [CNN_UNet/](CNN_UNet/) | ResNet-50 + U-Net decoder |
-| **Swin Transformer** | [Swin-Transformer/](Swin-Transformer/) | Vision Transformer baseline |
-| **TransformerSwinTiny** | [TransformerSwinTiny/](TransformerSwinTiny/) | Lightweight Swin variant |
+## 📊 Datasets
 
-## 📊 Datasets Supported
+| Dataset | Env var | Default path |
+|---------|---------|-------------|
+| LoveDA | `LOVEDA_ROOT` | `data/LoveDA` |
+| ISPRS Potsdam | `POTSDAM_ROOT` | `data/Potsdam` |
 
-### LoveDA (Land-cOVEr Domain Adaptive)
+## 🚀 Quick Workflows
 
-- **Type:** RGB remote sensing imagery
-- **Resolution:** 512×512 patches
-- **Classes:** 7 semantic classes
-- **Domains:** Urban and Rural scenes
-- **Results:** [Comparison_Experiments/](Comparison_Experiments/README.md)
-- **Config File:** `config.py` in each model directory
-
-### ISPRS Potsdam (2D Semantic Labeling)
-
-- **Type:** RGB-Infrared (IRRG) imagery
-- **Resolution:** 512×512 patches
-- **Classes:** 6 semantic classes
-- **Results:** [Comparison_Experiments_ICPRS_potsdam/](Comparison_Experiments_ICPRS_potsdam/README.md)
-- **Config File:** `config_icprs.py` in each model directory
-
-## 🚀 Getting Started
-
-### 1. **Quick Setup**
+### Setup
 ```bash
+git clone https://github.com/Dineth14/Mamba-Segmentation
 cd Mamba-Segmentation
-conda create -n mamba-seg python=3.9
-conda activate mamba-seg
+bash setup_backbones.sh vmamba      # clone only what you need
+conda create -n mamba-seg python=3.9 -y && conda activate mamba-seg
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install tensorboard tqdm pyyaml timm
 ```
 
-### 2. **Prepare Dataset**
-- Download [LoveDA](http://loveda.rsvision.org/) or [ISPRS Potsdam](http://www2.isprs.org/commissions/comm3/wg4/potsdam-2d-semantic-labeling.html)
-- Extract and note the path
-
-### 3. **Choose a Model**
+### Train
 ```bash
-cd MambaVision  # or VMamba, VisionMamba, etc.
-pip install -r requirements.txt
+export LOVEDA_ROOT=/path/to/LoveDA
+python train.py --config configs/vmamba.yaml
+python train.py --config configs/mambavision.yaml variant=large batch_size=2
 ```
 
-### 4. **Configure Training**
-- Edit `config.py` (LoveDA) or `config_icprs.py` (Potsdam)
-- Set `DATA_ROOT` to your dataset path
-- Set `OUTPUT_DIR` for results
-
-### 5. **Train**
+### Evaluate
 ```bash
-python train.py
+python eval_domain.py --config configs/vmamba.yaml --ckpt path/to/best.pth --domain rural
+python eval_domain.py --config configs/vmamba.yaml --ckpt path/to/best.pth --domain all --append_csv results.csv
 ```
 
-**See:** [README.md](README.md) for detailed quick start
-
-## 🛠️ Tools & Analysis
-
-| Tool | File | Purpose |
-|------|------|---------|
-| **Benchmarking** | [tools/](tools/README.md) | FPS, memory, and efficiency metrics |
-| **Analysis Scripts** | [analysis/](analysis/README.md) | Boundary/rotation/domain analysis |
-| **Evaluation** | [tools/eval_loveda_urban_rural.py](tools/) | Domain-specific evaluation |
-| **Visualization** | [tools/plot_loveda_throughput_miou.py](tools/) | Performance plots |
-
-**Quick command:**
+### Profile efficiency
 ```bash
-python tools/benchmark_fps_mem.py --model mambavision --variant base
+python tools/benchmark_fps_mem.py --model vmamba --variant base
+python tools/benchmark_fps_mem_total.py --device cuda:0
 ```
 
-## 📈 Experiment Results
+### Run analysis
+```bash
+python analysis/rotation_analysis.py --device cuda:0
+python analysis/boundary_analysis.py --device cuda:0
+```
 
-### LoveDA Results
-- Directory: [Comparison_Experiments/](Comparison_Experiments/)
-- Documentation: [Comparison_Experiments/README.md](Comparison_Experiments/README.md)
-- Metrics: CSV files with FPS, memory, and IoU
-- Naming: `[model]_[variant]_[resolution]`
+## 📦 Pre-trained Weights
 
-### ISPRS Potsdam Results
-- Directory: [Comparison_Experiments_ICPRS_potsdam/](Comparison_Experiments_ICPRS_potsdam/)
-- Documentation: [Comparison_Experiments_ICPRS_potsdam/README.md](Comparison_Experiments_ICPRS_potsdam/README.md)
-- Results: Per-experiment directories with metrics
+Checkpoints are hosted on HuggingFace: [dineth18/Mamba-Segmentation](https://huggingface.co/dineth18/Mamba-Segmentation)
 
-### Analysis Outputs
-- Directory: [analysis_outputs/](analysis_outputs/)
-- Contains: CSV results and PNG visualizations from analysis scripts
+## 🛠️ Tools
 
-## 📦 Weights
-
-### Pre-trained Weights
-- **Location:** [weights/](weights/README.md)
-- **ImageNet:** ResNet-18, ResNet-50
-- **Model-specific:** Auto-downloaded during training
-- **Fine-tuned:** Stored in experiment directories
-
-## 🤝 Contributing
-
-**Want to add a new model?** → See [CONTRIBUTING.md](CONTRIBUTING.md)
-
-Quick checklist:
-1. Create `[ModelName]/` directory
-2. Add required files (train.py, config.py, model.py, etc.)
-3. Write [ModelName]/README.md
-4. Test on LoveDA and/or Potsdam
-5. Document results in CSV format
-
-## 📝 Citation
-
-If using this repository, cite:
-- The respective Mamba architecture papers
-- LoveDA and ISPRS Potsdam dataset papers
-- This benchmarking framework
-
-**Paper Status:** Accepted at IGRAAS 2026
+| Script | Purpose |
+|--------|---------|
+| `tools/benchmark_fps_mem.py` | Single model FPS + memory |
+| `tools/benchmark_fps_mem_total.py` | All models comparison table |
+| `tools/benchmark_allall_isolated.py` | Isolated benchmarking |
+| `tools/eval_loveda_urban_rural.py` | Domain-split evaluation |
+| `tools/plot_loveda_throughput_miou.py` | FPS vs mIoU plots |
 
 ## 🐛 Troubleshooting
 
 | Issue | Solution |
 |-------|----------|
-| Dataset not found | Check `DATA_ROOT` in config file |
-| CUDA out of memory | Reduce `BATCH_SIZE` in config |
-| Import errors | Install requirements: `pip install -r requirements.txt` |
-| Model not downloading | Check internet connection and official repo access |
+| Dataset not found | Set `LOVEDA_ROOT` or `POTSDAM_ROOT` env var |
+| Import error for backbone | Run `bash setup_backbones.sh <backbone>` |
+| CUDA out of memory | Add `batch_size=2` CLI override |
+| Wrong weights loaded | Check `weights_path` in config or pass `--ckpt` explicitly |
 
-See individual model READMEs for model-specific issues.
+## 📝 Citation
 
-## 📚 Full Documentation Map
-
-```
-Repository Root/
-├── README.md ..................... Main entry point
-├── STRUCTURE.md .................. Repository organization (detailed)
-├── CONTRIBUTING.md ............... Adding new models
-├── INDEX.md (this file) .......... Navigation reference
-│
-├── MambaVision/README.md ......... MambaVision specifics
-├── VMamba/README.md .............. VMamba specifics
-├── VisionMamba/README.md ......... VisionMamba specifics
-├── spatial-mamba/README.md ....... SpatialMamba specifics
-│
-├── Comparison_Experiments/README.md ........ LoveDA results guide
-├── Comparison_Experiments_ICPRS_potsdam/README.md .. Potsdam results
-├── analysis/README.md ................. Analysis scripts guide
-├── tools/README.md ................... Benchmarking tools
-└── weights/README.md ................. Pre-trained weights
-```
-
-## 🔍 Common Workflows
-
-### Training MambaVision on LoveDA
-```bash
-cd MambaVision
-# Edit config.py: set DATA_ROOT
-python train.py
-```
-
-### Training VMamba on Potsdam
-```bash
-cd VMamba
-# Edit config_icprs.py: set DATA_ROOT
-python train.py
-```
-
-### Benchmark All Models
-```bash
-python tools/benchmark_fps_mem_total.py --device cuda:0
-```
-
-### Analyze Robustness
-```bash
-cd analysis
-python rotation_analysis.py --device cuda:0
-```
-
-### Compare FPS vs mIoU
-```bash
-python tools/plot_loveda_throughput_miou.py --csv_path Comparison_Experiments/fps_mem_allall.csv
-```
-
-## 📞 Quick Links
-
-- **Download LoveDA:** http://loveda.rsvision.org/
-- **Download ISPRS Potsdam:** http://www2.isprs.org/commissions/comm3/wg4/potsdam-2d-semantic-labeling.html
-- **MambaVision Official:** https://github.com/NVlabs/MambaVision
-- **VMamba Official:** https://github.com/MzeroMiko/VMamba
-- **VisionMamba Official:** https://github.com/hustvl/Vim
-
-## 💡 Tips
-
-- Start with a smaller model variant (tiny) to test your setup
-- Set `BATCH_SIZE = 1` if running on limited GPU memory
-- Use `--data_root` argument to override config file dataset path
-- Save the `.gitignore` exclusions - don't commit large output directories
-- Check `training_log.txt` in experiment directories for detailed logs
+**Paper:** Accepted at IGARSS 2026
 
 ---
 
-**Last Updated:** February 2026  
-**Paper Status:** Accepted at IGRAAS 2026
+**Last Updated:** May 2026
 
