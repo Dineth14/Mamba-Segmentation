@@ -1,0 +1,70 @@
+# configs/base.yaml
+# Shared training defaults — all per-backbone configs extend this file.
+# Override any value in your per-backbone config.
+
+# ------------ Dataset ------------
+dataset: loveda       # loveda | icprs (ISPRS Potsdam)
+data_root: ${LOVEDA_ROOT:data/LoveDA}
+num_classes: 7
+ignore_index: 255
+class_names:
+  - Background
+  - Building
+  - Road
+  - Water
+  - Barren
+  - Forest
+  - Agricultural
+
+# LoveDA train/val directory paths (relative to data_root)
+train_img_dirs:
+  - Train/Train/Urban/images_png
+  - Train/Train/Rural/images_png
+train_mask_dirs:
+  - Train/Train/Urban/masks_png
+  - Train/Train/Rural/masks_png
+val_img_dirs:
+  - Val/Val/Urban/images_png
+  - Val/Val/Rural/images_png
+val_mask_dirs:
+  - Val/Val/Urban/masks_png
+  - Val/Val/Rural/masks_png
+
+# ------------ Model ------------
+decoder_channels: 256
+
+# ------------ Optimisation ------------
+lr_backbone: 6.0e-5
+lr_head: 3.0e-4
+weight_decay: 0.05
+poly_power: 0.9
+grad_clip: 1.0
+use_amp: true
+
+# Loss
+focal_gamma: 2.0
+boundary_weight: 0.5
+boundary_warmup_iters: 10000
+
+# ------------ Training schedule ------------
+max_iters: 50000
+val_interval: 2500
+batch_size: 8
+crop_size: 512
+
+# ------------ DataLoader ------------
+num_workers: 8
+pin_memory: true
+persistent_workers: true
+prefetch_factor: 4
+
+# ------------ Normalisation ------------
+rgb_mean: [0.485, 0.456, 0.406]
+rgb_std: [0.229, 0.224, 0.225]
+
+# ------------ Logging / Checkpointing ------------
+log_interval: 250
+gpu_id: 0
+
+# ------------ Resume ------------
+resume_path: ""

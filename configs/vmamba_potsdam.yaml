@@ -1,0 +1,40 @@
+# configs/vmamba_potsdam.yaml
+# VMamba encoder — ISPRS Potsdam (ICPRS) dataset
+#
+# Usage:
+#   python train.py --config configs/vmamba_potsdam.yaml
+
+extends: base.yaml
+
+backbone: vmamba
+variant: small
+
+dataset: icprs
+data_root: ${POTSDAM_ROOT:data/Potsdam}
+num_classes: 6
+class_names:
+  - Impervious
+  - Building
+  - LowVeg
+  - Tree
+  - Car
+  - Clutter
+
+train_img_dirs: [Images]
+train_mask_dirs: [Labels]
+val_img_dirs: [Images]
+val_mask_dirs: [Labels]
+
+output_dir: Comparison_Experiments_ICPRS_potsdam/vmamba_small_512
+
+encoder_kwargs:
+  depths: [2, 2, 27, 2]
+  dims: [96, 192, 384, 768]
+  drop_path_rate: 0.3
+  pretrained: true
+  weights_path: auto
+
+batch_size: 8
+crop_size: 32
+max_iters: 250
+val_interval: 250

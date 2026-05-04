@@ -1,0 +1,32 @@
+# configs/visionmamba.yaml
+# Vision Mamba (Vim) encoder — LoveDA dataset
+# Variants: tiny | small | base
+#
+# Backbone weights go in: VisionMamba/weights/
+#   vim_t_midclstok_ft_78p3acc.pth  (tiny)
+#   vim_s_midclstok_ft_81p6acc.pth  (small)
+#   vim_b_midclstok_81p9acc.pth     (base)
+#   Download from https://github.com/hustvl/Vim
+#
+# Usage:
+#   python train.py --config configs/visionmamba.yaml
+
+extends: base.yaml
+
+backbone: visionmamba
+variant: base   # tiny | small | base
+
+output_dir: Comparison_Experiments/VisionMamba_base_512
+
+encoder_kwargs:
+  variant: base
+  depths: [1]
+  dims: [768]
+  drop_path_rate: 0.0
+  pretrained: true
+  weights_path: auto  # resolved to VisionMamba/weights/vim_b_midclstok_81p9acc.pth
+  use_rms_norm: true
+  fused_add_norm: true
+  residual_in_fp32: true
+  if_rope: false
+  bimamba_type: "v2"

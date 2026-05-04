@@ -1,0 +1,30 @@
+# configs/spatialmamba.yaml
+# Spatial-Mamba encoder — LoveDA dataset
+# Variants: tiny | small | base
+#
+# Backbone weights go in: spatial-mamba/weights/imageNet1K/
+#   spatialmamba_tiny_224_1k.pth
+#   spatialmamba_small_224_1k.pth
+#   spatialmamba_base_224_1k.pth
+#   Download from https://github.com/EdwardChasel/Spatial-Mamba
+#
+# Usage:
+#   python train.py --config configs/spatialmamba.yaml
+
+extends: base.yaml
+
+backbone: spatialmamba
+variant: base   # tiny | small | base
+
+output_dir: Comparison_Experiments/spatialmamba_base_512
+
+encoder_kwargs:
+  model_variant: base
+  depths: [2, 4, 21, 5]
+  dims: [96, 192, 384, 768]
+  drop_path_rate: 0.5
+  pretrained: true
+  weights_path: auto  # resolved to spatial-mamba/weights/imageNet1K/spatialmamba_base_224_1k.pth
+  d_state: 1
+  dt_init: "random"
+  mlp_ratio: 4.0

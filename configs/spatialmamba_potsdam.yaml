@@ -1,0 +1,44 @@
+# configs/spatialmamba_potsdam.yaml
+# Spatial-Mamba encoder — ISPRS Potsdam (ICPRS) dataset
+#
+# Usage:
+#   python train.py --config configs/spatialmamba_potsdam.yaml
+
+extends: base.yaml
+
+backbone: spatialmamba
+variant: base
+
+dataset: icprs
+data_root: ${POTSDAM_ROOT:data/Potsdam}
+num_classes: 6
+class_names:
+  - Impervious
+  - Building
+  - LowVeg
+  - Tree
+  - Car
+  - Clutter
+
+train_img_dirs: [Images]
+train_mask_dirs: [Labels]
+val_img_dirs: [Images]
+val_mask_dirs: [Labels]
+
+output_dir: Comparison_Experiments_ICPRS_potsdam/spatialmamba_base_512
+
+encoder_kwargs:
+  model_variant: base
+  depths: [2, 4, 21, 5]
+  dims: [96, 192, 384, 768]
+  drop_path_rate: 0.5
+  pretrained: true
+  weights_path: auto
+  d_state: 1
+  dt_init: "random"
+  mlp_ratio: 4.0
+
+batch_size: 8
+crop_size: 32
+max_iters: 250
+val_interval: 250

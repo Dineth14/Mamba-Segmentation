@@ -1,0 +1,22 @@
+# configs/cnn_deeplabv3p.yaml
+# CNN ResNet50 backbone (DeepLabv3+ style) — LoveDA dataset
+#
+# Backbone weights go in: weights/imagenet/
+#   resnet50-11ad3fa6.pth
+#   Download: torchvision.models.resnet50(weights='IMAGENET1K_V2') or
+#             https://download.pytorch.org/models/resnet50-11ad3fa6.pth
+#
+# Usage:
+#   python train.py --config configs/cnn_deeplabv3p.yaml
+
+extends: base.yaml
+
+backbone: cnn
+variant: resnet50
+
+output_dir: Comparison_Experiments/cnn_deeplabv3p_r50_512
+
+encoder_kwargs:
+  depth: 50
+  pretrained: true
+  weights_path: ${WEIGHTS_ROOT:weights}/imagenet/resnet50-11ad3fa6.pth

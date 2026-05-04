@@ -1,0 +1,33 @@
+# configs/transformer_swintiny.yaml
+# Swin Transformer Tiny backbone — LoveDA dataset
+#
+# Backbone weights go in: weights/imagenet/
+#   swin_tiny_patch4_window7_224.pth  (or similar swin-tiny checkpoint)
+#   Download from https://github.com/microsoft/Swin-Transformer
+#
+# Requires submodule: git submodule update --init Swin-Transformer
+#
+# Usage:
+#   python train.py --config configs/transformer_swintiny.yaml
+
+extends: base.yaml
+
+backbone: swintransformer
+variant: tiny
+
+output_dir: Comparison_Experiments/transformer_swintiny_512
+
+encoder_kwargs:
+  img_size: 512
+  patch_size: 4
+  embed_dim: 96
+  depths: [2, 2, 6, 2]
+  num_heads: [3, 6, 12, 24]
+  window_size: 7
+  mlp_ratio: 4.0
+  qkv_bias: true
+  drop_path_rate: 0.2
+  ape: false
+  patch_norm: true
+  pretrained: true
+  weights_path: ${WEIGHTS_ROOT:weights}/imagenet/swin_tiny_patch4_window7_224.pth

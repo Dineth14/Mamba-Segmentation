@@ -106,56 +106,91 @@ Loss:        L = L_lovász + L_focal + 0.5 × L_boundary
 ### 1. Clone & Install
 
 ```bash
-git clone https://github.com/YOUR_USERNAME/Mamba-Segmentation
+git clone https://github.com/dineth18/Mamba-Segmentation
 cd Mamba-Segmentation
 
+# Clone all backbone repos into the expected locations
+bash setup_backbones.sh
+
+# Or clone only the backbone(s) you need
+bash setup_backbones.sh vmamba          # VMamba only
+bash setup_backbones.sh mambavision     # MambaVision only
+bash setup_backbones.sh visionmamba     # Vision Mamba only
+bash setup_backbones.sh spatialmamba    # Spatial-Mamba only
+bash setup_backbones.sh swintransformer # Swin Transformer only
+```
+
+**Install base dependencies:**
+```bash
 conda create -n mamba-seg python=3.9 -y
 conda activate mamba-seg
+pip install torch torchvision torchaudio --index-url https://download.pytorch.org/whl/cu118
+pip install tensorboard tqdm pyyaml timm
+```
 
-cd MambaVision && pip install -r requirements.txt
+**Install backbone-specific dependencies** (only for the backbones you use):
+```bash
+# MambaVision
+pip install -e MambaVision/MambaVision
+
+# VMamba  (requires mamba-ssm)
+pip install -r VMamba/VMamba/requirements.txt
+
+# Vision Mamba (Vim)
+pip install -r VisionMamba/Vim/vim/requirements.txt
+
+# Spatial-Mamba
+pip install -r spatial-mamba/Spatial-Mamba/requirements.txt
+
+# Swin Transformer — no extra deps needed (uses timm)
 ```
 
 ### 2. Grab Pre-trained Backbone Weights
 
 > 🤗 **All trained segmentation checkpoints are available on [Hugging Face](https://huggingface.co/dineth18/Mamba-Segmentation).** Download `best.pth` for any model directly from there.
 
-| Backbone | Source | Location |
+| Backbone | Source | Expected location |
 |---|---|---|
-| VMamba (Tiny/Small/Base) | [VMamba repo](https://github.com/MzeroMiko/VMamba) | `VMamba/Vmamba_weights/ImageNet-1K/` |
+| VMamba (Tiny/Small/Base) | [VMamba repo](https://github.com/MzeroMiko/VMamba) | `VMamba/weights/ImageNet-1K/` |
 | MambaVision (Tiny→Large2) | [NVIDIA MambaVision](https://github.com/NVlabs/MambaVision) | `MambaVision/weights/1k/` |
-| Spatial-Mamba (Tiny/Small/Base) | [Spatial-Mamba repo](https://github.com/EdwardChaworworrachat/SpatialMamba) | `spatial-mamba/weights/imageNet1K/` |
+| Spatial-Mamba (Tiny/Small/Base) | [Spatial-Mamba repo](https://github.com/EdwardChasel/Spatial-Mamba) | `spatial-mamba/weights/imageNet1K/` |
+| Vision Mamba (Vim) | [Vim repo](https://github.com/hustvl/Vim) | `VisionMamba/weights/` |
 | ResNet-50 / ResNet-18 | [torchvision](https://pytorch.org/vision/stable/models.html) | `weights/imagenet/` |
+| Swin-Tiny | [Swin-Transformer repo](https://github.com/microsoft/Swin-Transformer) | `weights/imagenet/` |
 
-Set the weights path in each backbone's `config.py` — that's it.
+Place weights at the paths above and they will be found automatically by `weights_path: auto` in the YAML config.
 
 ### 3. Configure Your Experiment
 
-Each backbone family has its own directory with a standardized interface:
+The entire codebase is driven by a single YAML config file. Pick one from `configs/`:
 
 ```
-<ModelFamily>/
-├── config.py          # ← edit DATA_ROOT / OUTPUT_DIR, or set env vars
-├── config_icprs.py    # ← for ISPRS Potsdam experiments
-├── train.py           # ← same training loop across all families
-├── model.py
-├── encoders.py
-├── light_decoder.py   # ← THE fixed decoder (identical everywhere)
-├── losses.py          # ← THE fixed loss (identical everywhere)
-└── utils.py
+configs/
+├── base.yaml                     ← shared training defaults (lr, batch_size, etc.)
+├── vmamba.yaml                   ← VMamba-Small, LoveDA
+├── vmamba_potsdam.yaml           ← VMamba-Small, ISPRS Potsdam
+├── mambavision.yaml              ← MambaVision-Base, LoveDA
+├── mambavision_potsdam.yaml      ← MambaVision-Large2, ISPRS Potsdam
+├── visionmamba.yaml              ← Vision Mamba-Base, LoveDA
+├── spatialmamba.yaml             ← Spatial-Mamba-Base, LoveDA
+├── cnn_deeplabv3p.yaml           ← ResNet-50, LoveDA
+├── cnn_unet.yaml                 ← ResNet-50, LoveDA (U-Net decoder)
+├── transformer_unetformer.yaml   ← ResNet-18, LoveDA
+└── transformer_swintiny.yaml     ← Swin-Tiny, LoveDA
 ```
 
-**Path configuration** — two approaches:
+**Set your dataset path** — two approaches:
 
 **Option A — environment variables (recommended):**
 ```bash
 export LOVEDA_ROOT=/path/to/LoveDA          # for LoveDA experiments
 export POTSDAM_ROOT=/path/to/ISPRS_Potsdam  # for Potsdam experiments
-export OUTPUT_DIR=/path/to/output           # optional — defaults to Comparison_Experiments/
-python train.py
 ```
 
-**Option B — edit the config directly:**
-Open `config.py` and change `DATA_ROOT` and `OUTPUT_DIR` near the top of the file.
+**Option B — CLI override:**
+```bash
+python train.py --config configs/vmamba.yaml data_root=/path/to/LoveDA
+```
 
 ---
 
@@ -209,29 +244,48 @@ DATA_ROOT/
 
 </details>
 
-**Must-do:** Set `DATA_ROOT` in `config.py` (LoveDA) or `config_icprs.py` (Potsdam) to your local dataset path.
+**Must-do:** Set `LOVEDA_ROOT` env var (LoveDA) or `POTSDAM_ROOT` env var (Potsdam), or pass `data_root=...` on the command line.
 
 ---
 
 ## 🚀 Train & Evaluation
 
-YAML-free, config-driven — clean and reproducible.
+One entry point. Config-driven. Clean and reproducible.
 
 ### Train
 
 ```bash
-# LoveDA — pick any backbone family
-cd MambaVision                          # or VMamba/, spatial-mamba/, CNN_DeepLabv3p/, etc.
-# → edit config.py: set DATA_ROOT, OUTPUT_DIR, and backbone variant
-python train.py
+# LoveDA — pick any backbone
+python train.py --config configs/vmamba.yaml
+python train.py --config configs/mambavision.yaml
+python train.py --config configs/spatialmamba.yaml
+python train.py --config configs/cnn_deeplabv3p.yaml
+python train.py --config configs/transformer_swintiny.yaml
 
 # ISPRS Potsdam
-cd VMamba
-# → edit config_icprs.py: set DATA_ROOT and OUTPUT_DIR
-python train.py
+python train.py --config configs/vmamba_potsdam.yaml
+python train.py --config configs/mambavision_potsdam.yaml
+
+# Override any config key on the command line
+python train.py --config configs/mambavision.yaml variant=small batch_size=4
+python train.py --config configs/vmamba.yaml output_dir=my_experiment max_iters=25000
 ```
 
 Checkpoints + TensorBoard logs land in `Comparison_Experiments/<experiment_name>/`.
+
+### Cross-Domain Evaluation
+
+```bash
+# Evaluate on Urban or Rural val split
+python eval_domain.py --config configs/vmamba.yaml \
+    --ckpt Comparison_Experiments/Vmamb_small_512/checkpoints/best.pth \
+    --domain rural --split val
+
+# Save results to CSV
+python eval_domain.py --config configs/mambavision.yaml \
+    --ckpt path/to/best.pth --domain urban \
+    --append_csv results/domain_eval.csv
+```
 
 ### Efficiency Profiling
 

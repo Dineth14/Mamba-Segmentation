@@ -1,0 +1,27 @@
+# configs/vmamba.yaml
+# VMamba encoder — LoveDA dataset
+# Variants: tiny | small | base
+#
+# Backbone weights go in: VMamba/weights/ImageNet-1K/
+#   vssmtiny_dp01_ckpt_epoch_292.pth
+#   vssmsmall_dp03_ckpt_epoch_238.pth
+#   vssmbase_dp06_ckpt_epoch_241.pth
+#   Download from https://github.com/MzeroMiko/VMamba
+#
+# Usage:
+#   python train.py --config configs/vmamba.yaml
+#   python train.py --config configs/vmamba.yaml variant=small
+
+extends: base.yaml
+
+backbone: vmamba
+variant: small  # tiny | small | base
+
+output_dir: Comparison_Experiments/Vmamb_small_512
+
+encoder_kwargs:
+  depths: [2, 2, 27, 2]
+  dims: [96, 192, 384, 768]
+  drop_path_rate: 0.3
+  pretrained: true
+  weights_path: auto  # resolved to VMamba/weights/ImageNet-1K/vssmsmall_dp03_ckpt_epoch_238.pth

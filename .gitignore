@@ -81,6 +81,19 @@ Comparison_Experiments_ICPRS_potsdam/**/*.log
 Comparison_Experiments/**/*.csv
 Comparison_Experiments_ICPRS_potsdam/**/*.csv
 
+# Backbone repositories (clone with: bash setup_backbones.sh)
+MambaVision/MambaVision/
+VMamba/VMamba/
+VisionMamba/Vim/
+spatial-mamba/Spatial-Mamba/
+Swin-Transformer/
+
+# Backbone pre-trained weight directories (download separately)
+MambaVision/weights/
+VMamba/Vmamba_weights/
+VisionMamba/weights/
+spatial-mamba/weights/
+
 # Weights directory (pre-trained backbone weights)
 weights/imagenet/
 

@@ -1,0 +1,21 @@
+# configs/transformer_unetformer.yaml
+# Transformer + UNetFormer (ResNet18 backbone) — LoveDA dataset
+#
+# Backbone weights go in: weights/imagenet/
+#   resnet18-f37072fd.pth
+#   Download: https://download.pytorch.org/models/resnet18-f37072fd.pth
+#
+# Usage:
+#   python train.py --config configs/transformer_unetformer.yaml
+
+extends: base.yaml
+
+backbone: cnn
+variant: resnet18
+
+output_dir: Comparison_Experiments/transformer_unetformer_r18_512
+
+encoder_kwargs:
+  depth: 18
+  pretrained: true
+  weights_path: ${WEIGHTS_ROOT:weights}/imagenet/resnet18-f37072fd.pth

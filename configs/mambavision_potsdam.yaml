@@ -1,0 +1,42 @@
+# configs/mambavision_potsdam.yaml
+# MambaVision encoder — ISPRS Potsdam (ICPRS) dataset
+#
+# Usage:
+#   python train.py --config configs/mambavision_potsdam.yaml
+
+extends: base.yaml
+
+backbone: mambavision
+variant: large2   # best Potsdam variant from paper
+
+dataset: icprs
+data_root: ${POTSDAM_ROOT:data/Potsdam}
+num_classes: 6
+class_names:
+  - Impervious
+  - Building
+  - LowVeg
+  - Tree
+  - Car
+  - Clutter
+
+train_img_dirs: [Images]
+train_mask_dirs: [Labels]
+val_img_dirs: [Images]
+val_mask_dirs: [Labels]
+
+output_dir: Comparison_Experiments_ICPRS_potsdam/mambavision_large2_512
+
+encoder_kwargs:
+  model_variant: large2
+  depths: [3, 3, 12, 5]
+  dims: [196, 392, 784, 1568]
+  drop_path_rate: 0.3
+  pretrained: true
+  weights_path: auto
+
+# Potsdam-specific training settings
+batch_size: 8
+crop_size: 32
+max_iters: 250
+val_interval: 250
