@@ -8,24 +8,23 @@ from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 import os
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Config:
     """Master configuration for Vision Mamba training on ICPRS."""
 
     # ============== Paths ==============
-    # Change to Potsdam if needed: /storage2/ChangeDetection/Datasets/ICPRS/Potsdam
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/ICPRS/Vaihingen"
+    # Set POTSDAM_ROOT env var to point to your Potsdam or Vaihingen dataset path
+    DATA_ROOT: str = os.environ.get("POTSDAM_ROOT", "data/Potsdam")  # set POTSDAM_ROOT env var or edit this path
     DATASET: str = "icprs"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = (
-        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/"
-        "Comparison_Experiments_ICPRS/visionmamba_vaihingen_512"
-    )
+    OUTPUT_DIR: str = os.path.join(_HERE, "..", "Comparison_Experiments_ICPRS_potsdam", "visionmamba_base_512")
     RESUME_PATH: str = ""
 
     # Vision Mamba Weights Directory
-    VIM_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VisionMamba/weights"
+    VIM_WEIGHTS_DIR: str = os.path.join(_HERE, "weights")
 
     # ============== Model ==============
     NUM_CLASSES: int = 6

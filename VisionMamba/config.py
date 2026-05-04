@@ -9,20 +9,22 @@ from dataclasses import dataclass, field
 from typing import List, Tuple, Dict, Optional
 import os
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Config:
     """Master configuration for Vision Mamba training with multi-variant support."""
     
     # ============== Paths ==============
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
+    DATA_ROOT: str = os.environ.get("LOVEDA_ROOT", "data/LoveDA")  # set LOVEDA_ROOT env var or edit this path
     DATASET: str = "loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/VisionMamba_base_512/"
+    OUTPUT_DIR: str = os.path.join(_HERE, "..", "Comparison_Experiments", "VisionMamba_base_512")
     RESUME_PATH: str = ""
     
     # Vision Mamba Weights Directory
-    VIM_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VisionMamba/weights"
+    VIM_WEIGHTS_DIR: str = os.path.join(_HERE, "weights")
     
     # ============== Model ==============
     NUM_CLASSES: int = 7

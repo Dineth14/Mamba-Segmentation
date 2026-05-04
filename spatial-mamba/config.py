@@ -9,18 +9,20 @@ from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 import os
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Config:
     """Master configuration for UrbanMamba training."""
     
     # ============== Paths ==============
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
+    DATA_ROOT: str = os.environ.get("LOVEDA_ROOT", "data/LoveDA")  # set LOVEDA_ROOT env var or edit this path
     DATASET: str = "loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/spatialmamba_base_512"
+    OUTPUT_DIR: str = os.path.join(_HERE, "..", "Comparison_Experiments", "spatialmamba_base_512")
     RESUME_PATH: str = ""
-    SPATIALMAMBA_WEIGHTS_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/spatial-mamba/weights/imageNet1K"
+    SPATIALMAMBA_WEIGHTS_DIR: str = os.path.join(_HERE, "weights", "imageNet1K")
     SPATIALMAMBA_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
         "tiny": "spatialmamba_tiny_224_1k.pth",
         "small": "spatialmamba_small_224_1k.pth",

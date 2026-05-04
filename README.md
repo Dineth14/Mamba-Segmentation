@@ -9,6 +9,7 @@
 [![🐍 Python](https://img.shields.io/badge/🐍_Python-3.9-3776AB)](https://www.python.org/)
 [![🔥 PyTorch](https://img.shields.io/badge/🔥_PyTorch-2.0+-EE4C2C)](https://pytorch.org/)
 [![License](https://img.shields.io/badge/License-MIT-yellow)](LICENSE)
+[![🤗 Weights](https://img.shields.io/badge/🤗_Weights-Hugging_Face-yellow)](https://huggingface.co/dineth18/Mamba-Segmentation)
 
 One pipeline. One decoder. One loss. One schedule. **Five backbone families.** The only variable is the encoder — so the results finally mean something. SSMs dominate, scaling plateaus early, domain transfer is asymmetric, and boundaries are where every model breaks.
 
@@ -116,6 +117,8 @@ cd MambaVision && pip install -r requirements.txt
 
 ### 2. Grab Pre-trained Backbone Weights
 
+> 🤗 **All trained segmentation checkpoints are available on [Hugging Face](https://huggingface.co/dineth18/Mamba-Segmentation).** Download `best.pth` for any model directly from there.
+
 | Backbone | Source | Location |
 |---|---|---|
 | VMamba (Tiny/Small/Base) | [VMamba repo](https://github.com/MzeroMiko/VMamba) | `VMamba/Vmamba_weights/ImageNet-1K/` |
@@ -131,7 +134,7 @@ Each backbone family has its own directory with a standardized interface:
 
 ```
 <ModelFamily>/
-├── config.py          # ← edit DATA_ROOT, OUTPUT_DIR, variant
+├── config.py          # ← edit DATA_ROOT / OUTPUT_DIR, or set env vars
 ├── config_icprs.py    # ← for ISPRS Potsdam experiments
 ├── train.py           # ← same training loop across all families
 ├── model.py
@@ -140,6 +143,19 @@ Each backbone family has its own directory with a standardized interface:
 ├── losses.py          # ← THE fixed loss (identical everywhere)
 └── utils.py
 ```
+
+**Path configuration** — two approaches:
+
+**Option A — environment variables (recommended):**
+```bash
+export LOVEDA_ROOT=/path/to/LoveDA          # for LoveDA experiments
+export POTSDAM_ROOT=/path/to/ISPRS_Potsdam  # for Potsdam experiments
+export OUTPUT_DIR=/path/to/output           # optional — defaults to Comparison_Experiments/
+python train.py
+```
+
+**Option B — edit the config directly:**
+Open `config.py` and change `DATA_ROOT` and `OUTPUT_DIR` near the top of the file.
 
 ---
 

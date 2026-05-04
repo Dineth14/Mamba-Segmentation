@@ -9,24 +9,21 @@ from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 import os
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Config:
     """Master configuration for Spatial-Mamba training on ICPRS."""
 
     # ============== Paths ==============
-    # Change to Vaihingen if needed: /storage2/ChangeDetection/Datasets/ICPRS/Vaihingen
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/ICPRS/Potsdam"
+    # Set POTSDAM_ROOT to your Vaihingen path to use Vaihingen instead
+    DATA_ROOT: str = os.environ.get("POTSDAM_ROOT", "data/Potsdam")  # set POTSDAM_ROOT env var or edit this path
     DATASET: str = "icprs"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = (
-        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/"
-        "Comparison_Experiments_ICPRS_potsdam/spatialmamba_base_512"
-    )
+    OUTPUT_DIR: str = os.path.join(_HERE, "..", "Comparison_Experiments_ICPRS_potsdam", "spatialmamba_base_512")
     RESUME_PATH: str = ""
-    SPATIALMAMBA_WEIGHTS_DIR: str = (
-        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/spatial-mamba/weights/imageNet1K"
-    )
+    SPATIALMAMBA_WEIGHTS_DIR: str = os.path.join(_HERE, "weights", "imageNet1K")
     SPATIALMAMBA_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
         "tiny": "spatialmamba_tiny_224_1k.pth",
         "small": "spatialmamba_small_224_1k.pth",

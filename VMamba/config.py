@@ -9,23 +9,25 @@ from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 import os
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Config:
     """Master configuration for UrbanMamba training."""
     
     # ============== Paths ==============
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/Loveda"
+    DATA_ROOT: str = os.environ.get("LOVEDA_ROOT", "data/LoveDA")  # set LOVEDA_ROOT env var or edit this path
     DATASET: str = "loveda"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_base_512_2/"
-    RESUME_PATH: str = "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/Comparison_Experiments/Vmamb_base_512_2/checkpoints/checkpoint_iter_25000.pth"
+    OUTPUT_DIR: str = os.path.join(_HERE, "..", "Comparison_Experiments", "vmamba_base_512")
+    RESUME_PATH: str = ""
     VMAMBA_WEIGHT_SET: str = "imagenet1k"  # "imagenet1k" | "ade20k" | "vanilla_ade20k"
     VMAMBA_WEIGHTS_DIR: str = ""
     VMAMBA_WEIGHTS_DIR_MAP: Dict[str, str] = field(default_factory=lambda: {
-        "imagenet1k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/ImageNet-1K",
-        "ade20k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/ADE20K_weights",
-        "vanilla_ade20k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/vanilla-vmamba-ADE20K",
+        "imagenet1k": os.path.join(_HERE, "Vmamba_weights", "ImageNet-1K"),
+        "ade20k": os.path.join(_HERE, "Vmamba_weights", "ADE20K_weights"),
+        "vanilla_ade20k": os.path.join(_HERE, "Vmamba_weights", "vanilla-vmamba-ADE20K"),
     })
     VMAMBA_WEIGHTS_FILE_MAP: Dict[str, Dict[str, str]] = field(default_factory=lambda: {
         "imagenet1k": {

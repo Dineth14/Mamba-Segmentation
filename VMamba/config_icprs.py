@@ -9,27 +9,26 @@ from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 import os
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Config:
     """Master configuration for VMamba training on ICPRS."""
 
     # ============== Paths ==============
-    # Change to Vaihingen if needed: /storage2/ChangeDetection/Datasets/ICPRS/Vaihingen
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/ICPRS/Potsdam"
+    # Set POTSDAM_ROOT to your Vaihingen path to use Vaihingen instead
+    DATA_ROOT: str = os.environ.get("POTSDAM_ROOT", "data/Potsdam")  # set POTSDAM_ROOT env var or edit this path
     DATASET: str = "icprs"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = (
-        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/"
-        "Comparison_Experiments_ICPRS_potsdam/vmamba_gpu"
-    )
+    OUTPUT_DIR: str = os.path.join(_HERE, "..", "Comparison_Experiments_ICPRS_potsdam", "vmamba_base_512")
     RESUME_PATH: str = ""
     VMAMBA_WEIGHT_SET: str = "imagenet1k"  # "imagenet1k" | "ade20k" | "vanilla_ade20k"
     VMAMBA_WEIGHTS_DIR: str = ""
     VMAMBA_WEIGHTS_DIR_MAP: Dict[str, str] = field(default_factory=lambda: {
-        "imagenet1k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/ImageNet-1K",
-        "ade20k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/ADE20K_weights",
-        "vanilla_ade20k": "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/VMamba/Vmamba_weights/vanilla-vmamba-ADE20K",
+        "imagenet1k": os.path.join(_HERE, "Vmamba_weights", "ImageNet-1K"),
+        "ade20k": os.path.join(_HERE, "Vmamba_weights", "ADE20K_weights"),
+        "vanilla_ade20k": os.path.join(_HERE, "Vmamba_weights", "vanilla-vmamba-ADE20K"),
     })
     VMAMBA_WEIGHTS_FILE_MAP: Dict[str, Dict[str, str]] = field(default_factory=lambda: {
         "imagenet1k": {

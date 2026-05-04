@@ -9,24 +9,21 @@ from dataclasses import dataclass, field
 from typing import List, Tuple, Dict
 import os
 
+_HERE = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class Config:
     """Master configuration for MambaVision training on ICPRS."""
 
     # ============== Paths ==============
-    # Change to Potsdam if needed: /storage2/ChangeDetection/Datasets/ICPRS/Potsdam
-    DATA_ROOT: str = "/storage2/ChangeDetection/Datasets/ICPRS/Potsdam"
+    # Set POTSDAM_ROOT env var to point to your dataset path
+    DATA_ROOT: str = os.environ.get("POTSDAM_ROOT", "data/Potsdam")  # set POTSDAM_ROOT env var or edit this path
     DATASET: str = "icprs"
     WEIGHTS_PATH: str = "auto"
-    OUTPUT_DIR: str = (
-        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/"
-        "Comparison_Experiments_ICPRS_potsdam/mambavision_tiny_32"
-    )
+    OUTPUT_DIR: str = os.path.join(_HERE, "..", "Comparison_Experiments_ICPRS_potsdam", "mambavision_tiny_512")
     RESUME_PATH: str = ""
-    MAMBAVISION_WEIGHTS_DIR: str = (
-        "/storage2/ChangeDetection/NSST-mamba/Mamba-Segmentation/MambaVision/weights/1k"
-    )
+    MAMBAVISION_WEIGHTS_DIR: str = os.path.join(_HERE, "weights", "1k")
     MAMBAVISION_WEIGHTS_MAP: Dict[str, str] = field(default_factory=lambda: {
         "tiny": "mambavision_tiny_1k.pth.tar",
         "tiny2": "mambavision_tiny2_1k.pth.tar",
