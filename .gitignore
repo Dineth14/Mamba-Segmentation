@@ -40,28 +40,14 @@ datasets/
 *.pth.tar
 *.ckpt
 
-# Experiment artifacts (do not track results)
-# Track experiment directories but exclude their outputs
-Comparison_Experiments/**/checkpoints/
-Comparison_Experiments/**/logs/
-Comparison_Experiments/**/tensorboard/
-Comparison_Experiments/**/val_preds/
-Comparison_Experiments/**/results/
-Comparison_Experiments/**/runs/
-Comparison_Experiments/**/wandb/
-Comparison_Experiments/**/best_model/
-Comparison_Experiments/**/*.log
+# Comparison experiment directories (large checkpoints and results)
+Comparison_Experiments/
+Comparison_Experiments_ICPRS_potsdam/
 
-Comparison_Experiments_ICPRS_potsdam/**/checkpoints/
-Comparison_Experiments_ICPRS_potsdam/**/logs/
-Comparison_Experiments_ICPRS_potsdam/**/tensorboard/
-Comparison_Experiments_ICPRS_potsdam/**/val_preds/
-Comparison_Experiments_ICPRS_potsdam/**/results/
-Comparison_Experiments_ICPRS_potsdam/**/runs/
-Comparison_Experiments_ICPRS_potsdam/**/wandb/
-Comparison_Experiments_ICPRS_potsdam/**/best_model/
-Comparison_Experiments_ICPRS_potsdam/**/*.log
+# Analysis outputs (generated logs, plots, CSVs)
+analysis_outputs/
 
+# General artifact patterns
 **/outputs/
 **/checkpoints/
 **/tensorboard/
@@ -71,15 +57,7 @@ Comparison_Experiments_ICPRS_potsdam/**/*.log
 **/wandb/
 **/best_model/
 **/training_log.txt
-
-# Include README files in experiment directories
-!Comparison_Experiments/**/README.md
-!Comparison_Experiments_ICPRS_potsdam/**/README.md
-
-# Ignore per-experiment intermediate result CSVs
 **/domain_results.csv
-Comparison_Experiments/**/*.csv
-Comparison_Experiments_ICPRS_potsdam/**/*.csv
 
 # Backbone repositories (clone with: bash setup_backbones.sh)
 MambaVision/MambaVision/
@@ -94,8 +72,11 @@ VMamba/Vmamba_weights/
 VisionMamba/weights/
 spatial-mamba/weights/
 
-# Weights directory (pre-trained backbone weights)
+# Shared weights directory (all pre-trained backbone weights)
 weights/imagenet/
+weights/SpatialMambaweights/
+weights/Vmamba_weights/
+weights/weights/
 
 # OS/editor
 .DS_Store

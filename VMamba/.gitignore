@@ -1,5 +1,0 @@
-outputs/
-*.pth
-__pycache__/
-*.pyc
-Vmamba_weights/
